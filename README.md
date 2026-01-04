@@ -1,0 +1,155 @@
+# Project SUV
+> UE5(C++) 기반 **리슨 서버 Co-op 생존/탈출 게임** (Steam 출시 목표)
+
+<!-- (선택) 커버/트레일러/배지 -->
+<!--
+<p align="center">
+  <img src="YOUR_COVER_IMAGE_URL" alt="Project SUV Cover" width="100%"/>
+</p>
+
+<p align="center">
+  <a href="YOUR_STEAM_URL"><img src="https://img.shields.io/badge/Steam-Coming%20Soon-000000?style=for-the-badge&logo=steam&logoColor=white"/></a>
+  <a href="YOUR_REPO_URL"><img src="https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+</p>
+-->
+
+---
+
+## 1) 게임 소개 (Overview)
+**Project SUV**는 한 섬에 “실험체(플레이어)”를 투입해 좀비가 존재하는 환경에서 생존을 강요하는 설정의 **Co-op 생존/공포** 게임입니다.  
+플레이어는 각자 분산 스폰된 뒤 아이템을 파밍하며 생존하고, 서로 합류해 **미션을 완료한 뒤 탈출**하는 것이 목표입니다.
+
+- 분위기: 포스트 아포칼립스 / 공포 / 생존
+- 핵심 루프: **스폰 → 파밍/생존 → 합류 → 미션 진행 → 탈출**
+- 위협 요소: 좀비 AI, 소음 유발에 따른 어그로, 자원 고갈
+
+---
+
+## 2) 개발 목적 (Goals)
+- 최근 생존 장르는 **플레이어 간 경쟁/견제(PvP)** 중심으로 난이도를 만들다 보니, 정작 **AI(좀비)로부터의 위협이 상대적으로 약해** “환경은 배경이고 사람만 무섭다”는 흐름이 많다고 느꼈습니다.  
+  Project SZ는 이 방향과 다르게, **플레이어끼리 싸우는 게임이 아니라** “AI로부터 살아남는 것 자체가 핵심 난이도”가 되도록 설계합니다.
+
+- 목표는 단순히 같이 이동하는 Co-op이 아니라, **서로 역할을 나누고 협동해야만** 돌파 가능한 상황을 만드는 것입니다.  
+  예) 한 명이 소음/시야를 끌어 좀비 흐름을 분산시키고, 다른 한 명이 파밍/해제/미션 오브젝트를 진행하는 식의 **팀 단위 문제 해결**.
+
+
+## 3) 주요 구현 기능 (Key Features)
+
+### 멀티플레이/네트워크
+- **Listen Server 기반 Co-op 아키텍처**
+- **Replication / RPC(Server, Client, Multicast)** 기반 상태 동기화
+- **서버 확정 판정(Server Authority)**: 피격/데미지/상태 변화는 서버에서 확정 → 결과를 복제하여 클라에 반영
+- 네트워크 환경에서 발생하는 판정 불일치(지연/롤백 체감)를 줄이기 위한 디버깅 포인트(로그/시각화) 확보
+
+---
+
+### 전투/생존
+- **근접 / 총기 전투**
+- **총기 소음이 핵심 리스크**: 발사 시 **Noise 발생 → 좀비 어그로(Aggro) 급상승**
+- **한 마리씩 “정리”하는 전투가 어려운 설계**
+  - 좀비 개체가 단단하거나 수가 많아 **교전이 길어질수록 불리**
+  - 소음이 누적/전파되면 주변 개체가 합류하여 **웨이브(Wave) 형태로 몰려오는 상황**이 자주 발생
+- 결과적으로 플레이어의 최적 행동은 “무쌍”이 아니라  
+  **발각되면 도주/이탈 → 동선 재정비 → 재진입** 같은 생존 전략 중심
+- 플레이어 상태: **HP / 피격 / 사망**
+- 생존 자원: **허기/탈진** 등(확장 가능한 스탯 시스템)
+
+---
+
+### AI (좀비)
+- 기본 좀비 AI: **탐지 / 추적 / 공격**
+- **소음 민감도 중심의 추적 로직**
+  - 소음 발생 지점을 기준으로 **집결(Investigate/Converge)** 하며,
+  - 일정 임계 이상 소음이 발생하면 **주변 구역까지 확산**되어 증원 유입(웨이브화)
+- AI 난이도 설계 방향:  
+  **“잡아 치우는 적”이 아니라 “동선을 무너뜨리는 위협”**  
+  → 교전 유지보다 **은신/회피/분산**이 중요
+
+---
+
+### 인벤토리/아이템
+- **인벤토리 및 파밍**
+- 아이템 **버프/디버프**(회복/상태 완화/일시 강화 등)
+- **총기 부착물(Attachment) 시스템**
+  - 부착물 생성/획득/장착
+  - 부착물에 따라 반동/정확도/조작성 등 전투 성향 변화
+  - (선택) 소음 관련 옵션: 소음 감소/발각 거리 감소 등은 밸런싱 고려 요소
+
+---
+
+### 미션/탈출 루프
+- **파밍 → 합류 → 미션 진행 → 조건 달성 → 탈출**
+- UI/HUD: 상태(HP/허기/탈진), 미션 목표, 상호작용/경고(소음/어그로 등) 제공
+- 협동 설계: 한 명이 **유도/교란(소음 관리)**, 다른 한 명이 **오브젝트 진행/파밍** 등 역할 분담이 자연스럽게 발생
+
+
+---
+
+## 4) 기술 스택 (Tech Stack)
+- **Engine**: Unreal Engine 5 (C++)
+- **Network**: Listen Server / Replication / RPC
+- **Platform**: Steam 배포 목표 (Steam 빌드/배포 파이프라인 준비)
+- **Collaboration**: GitHub + Git LFS + Issues/Projects
+
+---
+
+## 5) 개발 일정 (Public Roadmap)
+> 아래 일정은 **2인 개발 기준의 목표 로드맵**이며, 실제 진행에 따라 스프린트 단위로 조정될 수 있습니다.
+
+| 단계 | 기간 | 목표 산출물 |
+|---|---:|---|
+| Pre-Prod | 1주(~01.04) | GDD / 기술설계 / 역할분담 확정 |
+| MVP-1 | 1주(~01.10) | 멀티플레이 플러그인 제작(1/5), 캐릭터 애니메이션 셋, 조준 로직, 사격/공격, 무기 컴포넌트 분할 |
+| MVP-2 | 1주(~01.18) | 좀비 제작 및 좀비 AI 제작(기본 AI) |
+| MVP-3 | 1주(~01.24) | 캐릭터(HP/피격/사망), 좀비(HP/피격/사망) |
+| MVP-4 | 2주(~02.07) | 인벤토리/아이템, 캐릭터 상태효과(허기/탈진 등), 아이템 버프, 총기 부착물 생성 및 장착 |
+| MVP-5 | 2주(~02.21) | 임시 테스트 및 버그 수정, 데모 버전 촬영, 후원 받기 |
+| MVP-6 | 2주(~03.07) | 소음 어그로, 사운드 플레이 제작(좀비 AI 수정) |
+| Alpha | 4주(~04.04) | 미션/탈출 플로우 기획·제작, UI/HUD, 밸런싱 1차, 플레이 테스트 및 2차 데모 촬영 |
+| Beta | 4주(~05.02) | 버그픽스/최적화/사용성 개선, 스팀 빌드/배포 준비 |
+| 출시 | 4주(~06.03) | 5/2 스팀 신청 및 배포(심사 약 1달 예상) |
+
+---
+
+## 6) 플레이/빌드 (Getting Started)
+> 추후 데모 배포 시 상세화 예정
+
+- Unreal Engine 버전: `UE 5.5.4`
+- 플랫폼: `Windows`
+- 실행/빌드:
+  1) 프로젝트 클론 (Git LFS 포함)
+  2) UE 에디터에서 `.uproject` 열기
+  3) `Development Editor` 빌드 후 실행
+
+---
+
+## 7) 협업 규칙 (Contributing / Workflow)
+- 브랜치 전략: `main`(안정) / `dev`(통합) / `feature/*`
+- 이슈 트래킹: GitHub Issues (재현 절차/스크린샷/로그 포함)
+- PR 규칙: 기능 단위 PR, 체크리스트(테스트/리플리케이션/리뷰) 통과 후 머지
+
+---
+
+## 8) 팀 (Team)
+- 2인 개발
+- 역할 분담 및 책임 범위는 Pre-Prod에서 확정 후 문서로 관리
+
+---
+
+## 9) 라이선스 (License)
+## 9) License / Usage Policy
+**All Rights Reserved.**
+
+This repository and its contents (source code, assets, and documentation) are provided for **viewing/evaluation purposes only**.
+
+### You may:
+- View the code for personal reference and portfolio review.
+
+### You may NOT:
+- Copy, reproduce, or redistribute any part of this repository (including substantial portions of code) in other projects.
+- Use the code or assets for commercial purposes or in public releases.
+- Extract, reuse, or reupload any game assets (models, textures, sounds, animations, UI, maps).
+- Create derivative works based on this repository without prior written permission.
+
+If you would like to use any part of this project, please contact the team for explicit permission.
+
