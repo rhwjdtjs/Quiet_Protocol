@@ -137,19 +137,5 @@
 ---
 
 ## 9) 라이선스 (License)
-## 9) License / Usage Policy
-**All Rights Reserved.**
 
-This repository and its contents (source code, assets, and documentation) are provided for **viewing/evaluation purposes only**.
-
-### You may:
-- View the code for personal reference and portfolio review.
-
-### You may NOT:
-- Copy, reproduce, or redistribute any part of this repository (including substantial portions of code) in other projects.
-- Use the code or assets for commercial purposes or in public releases.
-- Extract, reuse, or reupload any game assets (models, textures, sounds, animations, UI, maps).
-- Create derivative works based on this repository without prior written permission.
-
-If you would like to use any part of this project, please contact the team for explicit permission.
 
