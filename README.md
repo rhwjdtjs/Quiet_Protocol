@@ -14,9 +14,9 @@
 -->
 
 ---
-https://github.com/user-attachments/assets/92d2eb4b-4b1f-4399-b5e1-374af2b6276e
+<img width="1526" height="889" alt="Image" src="https://github.com/user-attachments/assets/39983cf1-4173-4326-8316-f69ec36800b6" />
 
-    컨셉아트
+    컨셉그래픽
 ## 1) 게임 소개 (Overview)
 **Project SUV**는 한 섬에 “실험체(플레이어)”를 투입해 좀비가 존재하는 환경에서 생존을 강요하는 설정의 **Co-op 생존/공포** 게임입니다.  
 플레이어는 각자 분산 스폰된 뒤 아이템을 파밍하며 생존하고, 서로 합류해 **미션을 완료한 뒤 탈출**하는 것이 목표입니다.
