@@ -16,6 +16,10 @@ public:
 	AQPCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
+	void SetOverlappingWeapon(AWeaponBase* Weapon) { OverlappingWeapon = Weapon; } //겹쳐진 무기 설정 함수
+	UFUNCTION(BlueprintCallable, Category = "Combat|Weapon")
+	FORCEINLINE AWeaponBase* GetOverlappingWeapon() const { return OverlappingWeapon; } //겹쳐진 무기 반환 함수
 	UFUNCTION(BlueprintPure, Category = "Combat")
 	FORCEINLINE FVector GetDesiredCameraOffset() const { return bIsCrouched ? CrouchedCameraOffset : StandingCameraOffset; } //원하는 카메라 오프셋 반환
 	UFUNCTION(BlueprintPure, Category = "Combat")
@@ -78,5 +82,7 @@ protected:
 private:
 	void UpdateMovementSpeed(); //움직임 속도 업데이트
 	bool bWantsToSprint = false; //달리기 의사 여부
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|Weapon", meta = (AllowPrivateAccess = "true"))
+	AWeaponBase* OverlappingWeapon = nullptr; //장착된 무기 포인터
 
 };
