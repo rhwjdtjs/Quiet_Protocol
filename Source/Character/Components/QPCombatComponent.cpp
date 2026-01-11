@@ -28,6 +28,7 @@ bool UQPCombatComponent::EquipWeapon(AWeaponBase* NewWeapon, bool bUnequipCurren
 	EquippedWeapon->SetActorEnableCollision(false); //충돌 비활성화
 	if (!AttachWeaponToCharacter(EquippedWeapon)) //캐릭터에 무기 부착 실패 시
 	{
+		EquippedWeapon->OnUnequipped(true); //무기 해제 처리 호출
 		EquippedWeapon = nullptr; //장착 실패 시 무기 초기화
 		SetWeaponType(EQPWeaponType::EWT_None); //무기 타입 없음으로 설정
 		return false; //false 반환
@@ -42,18 +43,32 @@ bool UQPCombatComponent::UnEquipWeapon(bool bDropToWorld)
 		SetWeaponType(EQPWeaponType::EWT_None); //무기 타입 없음으로 설정
 		return false; //소유한 캐릭터나 장착된 무기가 없으면 false 반환
 	}
+	StopAttack(); //공격 중지
 	//캐릭터 분리
 	EquippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); //월드 트랜스폼 유지하며 분리
-	EquippedWeapon->SetOwner(nullptr); //소유자 해제
-	EquippedWeapon->SetInstigator(nullptr); //인스티게이터 해제
-	if (bDropToWorld) {
-		EquippedWeapon->SetActorEnableCollision(true); //충돌 활성화
-	}
+	EquippedWeapon->SetActorEnableCollision(bDropToWorld); //충돌 설정
+	EquippedWeapon->OnUnequipped(bDropToWorld); //무기 해제 처리 호출
 	EquippedWeapon = nullptr; //장착된 무기 초기화
+
 	SetWeaponType(EQPWeaponType::EWT_None); //무기 타입 없음으로 설정
 	return true; //성공적으로 해제했으므로 true 반환
 }
-
+void UQPCombatComponent::StartAttack()
+{
+	if (!EquippedWeapon) {
+		SetIsAttacking(false); //공격 상태 false로 설정
+		return; //장착된 무기가 없으면 반환
+	}
+	SetIsAttacking(true); //공격 상태 true로 설정
+	EquippedWeapon->StartFire(); //무기 발사 시작
+}
+void UQPCombatComponent::StopAttack()
+{
+	if (EquippedWeapon) {
+		EquippedWeapon->StopAttack(); //무기 공격 중지
+	}
+	SetIsAttacking(false); //공격 상태 false로 설정
+}
 void UQPCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -74,5 +89,10 @@ void UQPCombatComponent::SetWeaponType(EQPWeaponType NewType)
 	EquippedWeaponType = NewType; //무기 타입 설정
 	OnWeaponTypeChanged.Broadcast(EquippedWeaponType); //무기 타입 변경 델리게이트 브로드캐스트
 }
-
+void UQPCombatComponent::SetIsAttacking(bool bNewIsAttacking)
+{
+	if (bIsAttacking == bNewIsAttacking) return; //이미 같은 상태이면 반환
+	bIsAttacking = bNewIsAttacking; //공격 상태 설정
+	OnAttackStateChanged.Broadcast(bIsAttacking); //공격 상태 변경 델리게이트 브로드캐스트
+}
 
