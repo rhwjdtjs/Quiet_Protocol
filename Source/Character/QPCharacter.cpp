@@ -167,18 +167,20 @@ void AQPCharacter::TryEquipWeapon() {
 	const FVector TraceStart = FollowCamera ? FollowCamera->GetComponentLocation() : GetActorLocation(); //카메라 위치 가져오기
 	const FVector TraceDir = FollowCamera ? FollowCamera->GetForwardVector() : GetActorForwardVector(); //카메라 앞 방향 벡터 가져오기
 	const FVector TraceEnd = TraceStart + (TraceDir * EquipTraceDistance); //트레이
+	const float Radius = 30.f; //임시
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Equiptrace), false); //충돌 쿼리 파라미터 설정
 	Params.AddIgnoredActor(this); //자기 자신 무시
 	FHitResult Hit; //히트 결과 변수
 	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, Params); //라인 트레이스 수행
 	if (bDrawEquipTraceDebug) { //디버그 선 그리기 설정이 켜져 있으면
 		const FVector DebugEnd = bHit ? Hit.ImpactPoint : TraceEnd; //디버그 선의 끝 위치 계산
-		DrawDebugLine(GetWorld(), TraceStart, DebugEnd, FColor::Yellow, false, 2.f, 0, 1.f); //디버그 선 그리기
+		DrawDebugSphere(GetWorld(), DebugEnd, Radius, 16, FColor::Green, false, 2.f); //디버그 구 그리기
 	}
 	if (!bHit) return; //아무것도 맞지 않으면 함수 종료
-	if(AWeaponBase* HitWeapon = Cast<AWeaponBase>(Hit.GetActor())) //맞은 액터가 무기인지 확인
+	if(OverlappingWeapon) //겹쳐진 무기가 있으면
 	{
-		CombatComponent->EquipWeapon(HitWeapon, true); //무기 장착 시도
+		CombatComponent->EquipWeapon(OverlappingWeapon, true); //무기 장착 시도
+		OverlappingWeapon = nullptr; //겹쳐진 무기 초기화
 	}
 }
 void AQPCharacter::AttackPressed()

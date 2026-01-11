@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -34,6 +34,16 @@ public:
 	virtual void StopAttack_Implementation(); //기본 구현
 protected:
 	virtual void BeginPlay() override;
+	//#01.11.19시# 오버랩 무기 줍기 기능 추가//
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Pickup")
+	TObjectPtr<class USphereComponent> PickupSphere; //무기 픽업용 스피어 컴포넌트
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Pickup", meta = (ClampMin = "0.0"))
+	float PickupSphereRadius = 120.f; //픽업 스피어 반지름
+	UFUNCTION()
+	void OnPickupBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); //픽업 시작 오버랩 처리 함수
+	UFUNCTION()
+	void OnPickupEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex); //픽업 종료 오버랩 처리 함수
+	//#01.11.19시# 오버랩 무기 줍기 기능 추가//
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh; //무기 메쉬 컴포넌트 // TObjectPtr - 자동 null 처리
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
