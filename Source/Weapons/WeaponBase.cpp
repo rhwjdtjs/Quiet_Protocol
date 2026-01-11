@@ -5,50 +5,50 @@
 AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh")); //무기 메쉬 컴포넌트 생성
-	SetRootComponent(WeaponMesh); //RootComponent로 설정
-	//픽업 가능하게
-	WeaponMesh->SetSimulatePhysics(true); //물리 시뮬레이션 활성화
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); //충돌 활성화
-	WeaponMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); //충돌 채널 설정
-	WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); //모든 채널에 대한 충돌 응답 무시
-	WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); //Pawn 채널에 대해 겹침 응답 설정
-	WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block); //Visibility 채널에 대해 차단 응답 설정
-	WeaponMesh->SetGenerateOverlapEvents(true); //겹침 이벤트 생성 활성화
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh")); //臾닿린 硫 而댄щ 
+	SetRootComponent(WeaponMesh); //RootComponent濡 ㅼ
+	//쎌 媛ν寃
+	WeaponMesh->SetSimulatePhysics(true); //臾쇰━ 裕щ댁 깊
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); //異⑸ 깊
+	WeaponMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); //異⑸ 梨 ㅼ
+	WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); //紐⑤ 梨  異⑸  臾댁
+	WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); //Pawn 梨  寃뱀묠  ㅼ
+	WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block); //Visibility 梨  李⑤  ㅼ
+	WeaponMesh->SetGenerateOverlapEvents(true); //寃뱀묠 대깽  깊
 }
 
 void AWeaponBase::OnEquipped(ACharacter* NewOwner)
 {
-	SetOwner(Cast<APawn>(NewOwner)); //소유자 설정
-	SetInstigator(Cast<APawn>(NewOwner)); //인스티게이터 설정
-	SetActorEnableCollision(false); //액터 충돌 비활성화
+	SetOwner(Cast<APawn>(NewOwner)); // ㅼ
+	SetInstigator(Cast<APawn>(NewOwner)); //몄ㅽ곌댄 ㅼ
+	SetActorEnableCollision(false); //≫ 異⑸ 鍮깊
 
 	if (WeaponMesh) {
-		WeaponMesh->SetSimulatePhysics(false); //물리 시뮬레이션 비활성화
-		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); //충돌 비활성화
-		WeaponMesh->SetGenerateOverlapEvents(false); //겹침 이벤트 비활성화
+		WeaponMesh->SetSimulatePhysics(false); //臾쇰━ 裕щ댁 鍮깊
+		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); //異⑸ 鍮깊
+		WeaponMesh->SetGenerateOverlapEvents(false); //寃뱀묠 대깽 鍮깊
 	}
 
 }
 
 void AWeaponBase::OnUnequipped(bool bDropToWorld)
 {
-	SetOwner(nullptr); //소유자 해제
-	SetInstigator(nullptr); //인스티게이터 해제
-	if (!WeaponMesh) return; //무기 메쉬가 유효하지 않으면 반환
-	SetActorEnableCollision(bDropToWorld); //액터 충돌 설정
+	SetOwner(nullptr); // 댁
+	SetInstigator(nullptr); //몄ㅽ곌댄 댁
+	if (!WeaponMesh) return; //臾닿린 硫ш ⑦吏 쇰㈃ 諛
+	SetActorEnableCollision(bDropToWorld); //≫ 異⑸ ㅼ
 	if (bDropToWorld) {
-		WeaponMesh->SetSimulatePhysics(true); //물리 시뮬레이션 활성화
-		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); //충돌 활성화
-		WeaponMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); //충돌 채널 설정
-		WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); //모든 채널에 대한 충돌 응답 무시
-		WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); //Pawn 채널에 대해 겹침 응답 설정
-		WeaponMesh->SetGenerateOverlapEvents(true); //겹침 이벤트 생성 활성화
+		WeaponMesh->SetSimulatePhysics(true); //臾쇰━ 裕щ댁 깊
+		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); //異⑸ 깊
+		WeaponMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); //異⑸ 梨 ㅼ
+		WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore); //紐⑤ 梨  異⑸  臾댁
+		WeaponMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); //Pawn 梨  寃뱀묠  ㅼ
+		WeaponMesh->SetGenerateOverlapEvents(true); //寃뱀묠 대깽  깊
 	}
 	else {
-		WeaponMesh->SetSimulatePhysics(false); //물리 시뮬레이션 비활성화
-		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); //충돌 비활성화
-		WeaponMesh->SetGenerateOverlapEvents(false); //겹침 이벤트 비활성화
+		WeaponMesh->SetSimulatePhysics(false); //臾쇰━ 裕щ댁 鍮깊
+		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); //異⑸ 鍮깊
+		WeaponMesh->SetGenerateOverlapEvents(false); //寃뱀묠 대깽 鍮깊
 	}
 }
 
@@ -64,10 +64,10 @@ void AWeaponBase::Tick(float DeltaTime)
 }
 void AWeaponBase::StartFire_Implementation()
 {
-	//자식 클래스 작성 or 블루프린트
+	// 대  or 釉猷⑦由고
 }
 
 void AWeaponBase::StopAttack_Implementation()
 {
-	//자식 클래스 작성 or 블루프린트
+	// 대  or 釉猷⑦由고
 }

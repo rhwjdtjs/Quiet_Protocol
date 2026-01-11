@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+癤// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GunWeapon.h"
@@ -10,55 +10,55 @@
 
 AGunWeapon::AGunWeapon()
 {
-	WeaponType = EQPWeaponType::EWT_Gun; //무기 타입을 총기로 설정
+	WeaponType = EQPWeaponType::EWT_Gun; //臾닿린  珥湲곕 ㅼ
 }
 
-void AGunWeapon::StartFire_Implementation() //발사 시작 함수 재정의
+void AGunWeapon::StartFire_Implementation() //諛  ⑥ ъ
 {
-	if (bAutomatic) { //자동 발사 모드인 경우
-		FireOnce(); //한 번 발사
-		if (UWorld* World = GetWorld()) //월드가 유효한지 확인
+	if (bAutomatic) { // 諛 紐⑤ 寃쎌
+		FireOnce(); // 踰 諛
+		if (UWorld* World = GetWorld()) //媛 ⑦吏 
 		{
-			World->GetTimerManager().SetTimer(TimerHandle_AutoFire, this, &AGunWeapon::FireOnce, FireRate, true); //타이머 설정하여 일정 간격으로 발사
+			World->GetTimerManager().SetTimer(TimerHandle_AutoFire, this, &AGunWeapon::FireOnce, FireRate, true); //대㉧ ㅼ 쇱 媛寃⑹쇰 諛
 		}
 	}
 	else {
-		FireOnce(); //자동 발사 모드가 아닌 경우 한 번 발사
+		FireOnce(); // 諛 紐⑤媛  寃쎌  踰 諛
 	}
 }
 
-void AGunWeapon::StopAttack_Implementation() //공격 중지 함수 재정의
+void AGunWeapon::StopAttack_Implementation() //怨듦꺽 以吏 ⑥ ъ
 {
 	if(UWorld* World = GetWorld())
 	{
-		World->GetTimerManager().ClearTimer(TimerHandle_AutoFire); //자동 발사 타이머 해제
+		World->GetTimerManager().ClearTimer(TimerHandle_AutoFire); // 諛 대㉧ 댁
 	}
 }
 
-//임시 코드 다음에 프로젝트일 만들어서 총알 나가게 수정 현재는 히트스캔
-void AGunWeapon::FireOnce() //한 번 발사 함수
+// 肄 ㅼ 濡�몄 留ㅼ댁 珥 媛寃 � щ 몄ㅼ
+void AGunWeapon::FireOnce() // 踰 諛 ⑥
 {
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //무기 소유자를 캐릭터로 캐스팅
-	if (!OwnerCharacter) return; //소유자가 유효하지 않으면 반환
+	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //臾닿린 瑜 罹由�곕 罹ㅽ
+	if (!OwnerCharacter) return; //媛 ⑦吏 쇰㈃ 諛
 
-	APlayerController* PlayerController = Cast<APlayerController>(OwnerCharacter->GetController()); //캐릭터의 컨트롤러를 플레이어 컨트롤러로 캐스팅
-	if (!PlayerController || !PlayerController->PlayerCameraManager) return; //플레이어 컨트롤러나 카메라 매니저가 유효하지 않으면 반환
+	APlayerController* PlayerController = Cast<APlayerController>(OwnerCharacter->GetController()); //罹由�곗 而⑦몃·щ� �댁 而⑦몃·щ 罹ㅽ
+	if (!PlayerController || !PlayerController->PlayerCameraManager) return; //�댁 而⑦몃·щ 移대 留ㅻ�媛 ⑦吏 쇰㈃ 諛
 
-	const FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); //카메라 위치를 시작 지점으로 설정
-	const FVector Dir = PlayerController->PlayerCameraManager->GetCameraRotation().Vector(); //카메라 회전 방향을 발사 방향으로 설정
-	const FVector End = Start + (Dir * Range); //사거리만큼 떨어진 지점을 끝 지점으로 설정
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(GunFire), false); //충돌 쿼리 파라미터 설정
-	Params.AddIgnoredActor(this); //자기 자신 무시
-	Params.AddIgnoredActor(OwnerCharacter); //소유자 무시
-	FHitResult Hit; //히트 결과 변수
-	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params); //라인 트레이스 수행
-	const FVector TraceEnd = bHit ? Hit.ImpactPoint : End; //히트 여부에 따라 트레이스 끝 지점 설정
-	DrawDebugLine(GetWorld(), Start, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f); //디버그 라인 그리기
+	const FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); //移대 移瑜  吏�쇰 ㅼ
+	const FVector Dir = PlayerController->PlayerCameraManager->GetCameraRotation().Vector(); //移대 � 諛⑺μ 諛 諛⑺μ쇰 ㅼ
+	const FVector End = Start + (Dir * Range); //ш굅由щ ⑥댁 吏�  吏�쇰 ㅼ
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(GunFire), false); //異⑸ 荑쇰━ 쇰� ㅼ
+	Params.AddIgnoredActor(this); //湲  臾댁
+	Params.AddIgnoredActor(OwnerCharacter); // 臾댁
+	FHitResult Hit; // 寃곌낵 蹂
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params); //쇱 몃댁 
+	const FVector TraceEnd = bHit ? Hit.ImpactPoint : End; // щ 곕 몃댁  吏� ㅼ
+	DrawDebugLine(GetWorld(), Start, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f); //踰洹 쇱 洹몃━湲
 	
-	if(bHit && Hit.GetActor()) //히트했으며 히트한 액터가 유효한 경우
+	if(bHit && Hit.GetActor()) //명쇰ŉ 명 ≫곌 ⑦ 寃쎌
 	{
 		
-		UGameplayStatics::ApplyPointDamage(Hit.GetActor(), BaseDamage, Dir, Hit, OwnerCharacter->GetInstigatorController(), this, DamageTypeClass);//데미지 적용
+		UGameplayStatics::ApplyPointDamage(Hit.GetActor(), BaseDamage, Dir, Hit, OwnerCharacter->GetInstigatorController(), this, DamageTypeClass);//곕�吏 �
 		
 	}
 }

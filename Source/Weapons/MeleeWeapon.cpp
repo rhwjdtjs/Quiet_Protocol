@@ -8,29 +8,29 @@
 
 AMeleeWeapon::AMeleeWeapon()
 {
-	WeaponType = EQPWeaponType::EWT_Melee; //무기 타입을 근접 무기로 설정
+	WeaponType = EQPWeaponType::EWT_Melee; //臾닿린  洹쇱 臾닿린濡 ㅼ
 }
 
-void AMeleeWeapon::StartFire_Implementation() //공격 시작 함수 재정의
+void AMeleeWeapon::StartFire_Implementation() //怨듦꺽  ⑥ ъ
 {
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //무기 소유자를 캐릭터로 캐스팅
-	if (!OwnerCharacter) return; //소유자가 유효하지 않으면 반환
-	const FVector Start = OwnerCharacter->GetActorLocation() + OwnerCharacter->GetActorForwardVector() * 50.f; //캐릭터 앞쪽으로 시작 지점 설정
-	const FVector End = Start + OwnerCharacter->GetActorForwardVector() * SwingRange; //스윙 반경만큼 떨어진 지점을 끝 지점으로 설정
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(MeleeSwing), false); //충돌 쿼리 파라미터 설정
-	Params.AddIgnoredActor(this); //자기 자신 무시
-	Params.AddIgnoredActor(OwnerCharacter); //소유자 무시
-	TArray<FHitResult> HitResults; //히트 결과 배열
-	const bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(SwingRadius), Params); //스윕 수행
-	DrawDebugSphere(GetWorld(), End, SwingRadius, 12, FColor::Green, false, 0.35f); //디버그 스피어 그리기
-	if (!bHit) return;	//히트하지 않았으면 반환
-	for (const FHitResult& Hit : HitResults)//히트 결과 반복
+	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //臾닿린 瑜 罹由�곕 罹ㅽ
+	if (!OwnerCharacter) return; //媛 ⑦吏 쇰㈃ 諛
+	const FVector Start = OwnerCharacter->GetActorLocation() + OwnerCharacter->GetActorForwardVector() * 50.f; //罹由� 履쎌쇰  吏� ㅼ
+	const FVector End = Start + OwnerCharacter->GetActorForwardVector() * SwingRange; //ㅼ 諛寃쎈 ⑥댁 吏�  吏�쇰 ㅼ
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(MeleeSwing), false); //異⑸ 荑쇰━ 쇰� ㅼ
+	Params.AddIgnoredActor(this); //湲  臾댁
+	Params.AddIgnoredActor(OwnerCharacter); // 臾댁
+	TArray<FHitResult> HitResults; // 寃곌낵 諛곗
+	const bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(SwingRadius), Params); //ㅼ 
+	DrawDebugSphere(GetWorld(), End, SwingRadius, 12, FColor::Green, false, 0.35f); //踰洹 ㅽ쇱 洹몃━湲
+	if (!bHit) return;	//명吏 쇰㈃ 諛
+	for (const FHitResult& Hit : HitResults)// 寃곌낵 諛蹂
 	{
-		AActor* HitActor = Hit.GetActor(); //히트한 액터 가져오기
-		if (!HitActor) continue; //히트한 액터가 유효하지 않으면 다음으로
+		AActor* HitActor = Hit.GetActor(); //명 ≫ 媛�몄ㅺ린
+		if (!HitActor) continue; //명 ≫곌 ⑦吏 쇰㈃ ㅼ쇰
 		UGameplayStatics::ApplyPointDamage(HitActor, BaseDamage, OwnerCharacter->GetActorForwardVector(), Hit, OwnerCharacter->GetController(),
-			this, DamageTypeClass); //데미지 적용
-		break; //첫 번째 히트한 액터에만 데미지 적용 후 종료
+			this, DamageTypeClass); //곕�吏 �
+		break; //泥 踰吏 명 ≫곗留 곕�吏 �  醫猷
 	}
 	
 }
