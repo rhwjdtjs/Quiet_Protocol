@@ -8,29 +8,29 @@
 
 AMeleeWeapon::AMeleeWeapon()
 {
-	WeaponType = EQPWeaponType::EWT_Melee; //¹«±â Å¸ÀÔÀ» ±ÙÁ¢ ¹«±â·Î ¼³Á¤
+	WeaponType = EQPWeaponType::EWT_Melee; //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ…ÂÂ„ æ´¹ì‡±Â‘ è‡¾ë‹¿ë¦°æ¿¡Âœ Â„ã…¼Â•
 }
 
-void AMeleeWeapon::StartFire_Implementation() //°ø°İ ½ÃÀÛ ÇÔ¼ö ÀçÁ¤ÀÇ
+void AMeleeWeapon::StartFire_Implementation() //æ€¨ë“¦êº½ Â‹ÂœÂÂ‘ Â•â‘¥ÂˆÂ˜ ÂÑŠÂ•ÂÂ˜
 {
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //¹«±â ¼ÒÀ¯ÀÚ¸¦ Ä³¸¯ÅÍ·Î Ä³½ºÆÃ
-	if (!OwnerCharacter) return; //¼ÒÀ¯ÀÚ°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é ¹İÈ¯
-	const FVector Start = OwnerCharacter->GetActorLocation() + OwnerCharacter->GetActorForwardVector() * 50.f; //Ä³¸¯ÅÍ ¾ÕÂÊÀ¸·Î ½ÃÀÛ ÁöÁ¡ ¼³Á¤
-	const FVector End = Start + OwnerCharacter->GetActorForwardVector() * SwingRadius; //½ºÀ® ¹İ°æ¸¸Å­ ¶³¾îÁø ÁöÁ¡À» ³¡ ÁöÁ¡À¸·Î ¼³Á¤
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(MeleeSwing), false); //Ãæµ¹ Äõ¸® ÆÄ¶ó¹ÌÅÍ ¼³Á¤
-	Params.AddIgnoredActor(this); //ÀÚ±â ÀÚ½Å ¹«½Ã
-	Params.AddIgnoredActor(OwnerCharacter); //¼ÒÀ¯ÀÚ ¹«½Ã
-	TArray<FHitResult> HitResults; //È÷Æ® °á°ú ¹è¿­
-	const bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(SwingRange), Params); //½ºÀ¬ ¼öÇà
-	DrawDebugSphere(GetWorld(), End, SwingRadius, 12, FColor::Green, false, 0.35f); //µğ¹ö±× ½ºÇÇ¾î ±×¸®±â
-	if (!bHit) return;	//È÷Æ®ÇÏÁö ¾Ê¾ÒÀ¸¸é ¹İÈ¯
-	for (const FHitResult& Hit : HitResults)//È÷Æ® °á°ú ¹İº¹
+	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //è‡¾ë‹¿ë¦° Â†ÂŒÂœÂÂç‘œ ï§¦Âç”±ï¿½Â„ê³•Âœ ï§¦ÂÂŠã…½ÂŒÂ…
+	if (!OwnerCharacter) return; //Â†ÂŒÂœÂÂåª›Â€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ è«›Â˜Â™Â˜
+	const FVector Start = OwnerCharacter->GetActorLocation() + OwnerCharacter->GetActorForwardVector() * 50.f; //ï§¦Âç”±ï¿½Â„ Â•Âï§ŸìŒÂœì‡°Âœ Â‹ÂœÂÂ‘ ï§Â€ï¿½Â Â„ã…¼Â•
+	const FVector End = Start + OwnerCharacter->GetActorForwardVector() * SwingRange; //ÂŠã…¼ÂœÂ™ è«›Â˜å¯ƒìˆÂŒÂ Â–â‘¥Â–ëŒÂ„ ï§Â€ï¿½ÂÂÂ„ ÂÂ ï§Â€ï¿½ÂÂœì‡°Âœ Â„ã…¼Â•
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(MeleeSwing), false); //ç•°â‘¸ÂŒ è‘ì‡°â” ÂŒÂŒÂì‡°ï¿½Â„ Â„ã…¼Â•
+	Params.AddIgnoredActor(this); //ÂÂæ¹² ÂÂÂ‹ è‡¾ëŒÂ‹Âœ
+	Params.AddIgnoredActor(OwnerCharacter); //Â†ÂŒÂœÂÂ è‡¾ëŒÂ‹Âœ
+	TArray<FHitResult> HitResults; //ÂÂˆÂŠ å¯ƒê³Œë‚µ è«›ê³—Â—
+	const bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(SwingRadius), Params); //ÂŠã…¼ÂœÂ• ÂˆÂ˜Â–Â‰
+	DrawDebugSphere(GetWorld(), End, SwingRadius, 12, FColor::Green, false, 0.35f); //Â”Â”è¸°Â„æ´¹ ÂŠã…½Â”ì‡±Â– æ´¹ëªƒâ”æ¹²
+	if (!bHit) return;	//ÂÂˆÂŠëª…Â•Â˜ï§Â€ Â•ÂŠÂ•Â˜Âœì‡°ãˆƒ è«›Â˜Â™Â˜
+	for (const FHitResult& Hit : HitResults)//ÂÂˆÂŠ å¯ƒê³Œë‚µ è«›Â˜è¹‚
 	{
-		AActor* HitActor = Hit.GetActor(); //È÷Æ®ÇÑ ¾×ÅÍ °¡Á®¿À±â
-		if (!HitActor) continue; //È÷Æ®ÇÑ ¾×ÅÍ°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é ´ÙÀ½À¸·Î
+		AActor* HitActor = Hit.GetActor(); //ÂÂˆÂŠëª…Â•Âœ Â•â‰«Â„ åª›Â€ï¿½ëª„Â˜ã…ºë¦°
+		if (!HitActor) continue; //ÂÂˆÂŠëª…Â•Âœ Â•â‰«Â„ê³ŒÂ€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ Â‹ã…¼ÂÂŒÂœì‡°Âœ
 		UGameplayStatics::ApplyPointDamage(HitActor, BaseDamage, OwnerCharacter->GetActorForwardVector(), Hit, OwnerCharacter->GetController(),
-			this, DamageTypeClass); //µ¥¹ÌÁö Àû¿ë
-		break; //Ã¹ ¹øÂ° È÷Æ®ÇÑ ¾×ÅÍ¿¡¸¸ µ¥¹ÌÁö Àû¿ë ÈÄ Á¾·á
+			this, DamageTypeClass); //Âê³•ï¿½ï§Â€ ï¿½ÂÂš
+		break; //ï§£ è¸°Âˆï§ ÂÂˆÂŠëª…Â•Âœ Â•â‰«Â„ê³—Â—Âï§ÂŒ Âê³•ï¿½ï§Â€ ï¿½ÂÂš Â›Â„ é†«Â…çŒ·ÂŒ
 	}
 	
 }

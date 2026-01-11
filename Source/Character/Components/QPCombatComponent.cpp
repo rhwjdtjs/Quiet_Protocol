@@ -11,63 +11,63 @@ UQPCombatComponent::UQPCombatComponent()
 void UQPCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerCharacter = Cast<ACharacter>(GetOwner()); //¼ÒÀ¯ÇÑ Ä³¸¯ÅÍ °¡Á®¿À±â
+	OwnerCharacter = Cast<ACharacter>(GetOwner()); //Â†ÂŒÂœÂ•Âœ ï§¦Âç”±ï¿½Â„ åª›Â€ï¿½ëª„Â˜ã…ºë¦°
 }
 
 bool UQPCombatComponent::EquipWeapon(AWeaponBase* NewWeapon, bool bUnequipCurrent)
 {
-	if (!OwnerCharacter || !NewWeapon) return false; //¼ÒÀ¯ÇÑ Ä³¸¯ÅÍ³ª »õ ¹«±â°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é false ¹İÈ¯
-	if (EquippedWeapon == NewWeapon) return true; //ÀÌ¹Ì ÀåÂøµÈ ¹«±â¶ó¸é true ¹İÈ¯
-	if (EquippedWeapon && bUnequipCurrent) { //ÇöÀç ¹«±â°¡ ÀÖ°í ÇØÁ¦ ÇÃ·¡±×°¡ true¶ó¸é
-		UnEquipWeapon(true); //ÇöÀç ¹«±â ÇØÁ¦
+	if (!OwnerCharacter || !NewWeapon) return false; //Â†ÂŒÂœÂ•Âœ ï§¦Âç”±ï¿½Â„ê³•Â‚Â˜ ÂƒÂˆ è‡¾ë‹¿ë¦°åª›Â€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ false è«›Â˜Â™Â˜
+	if (EquippedWeapon == NewWeapon) return true; //ÂëŒ€ï¿½ ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦°Âì‡°ãˆƒ true è«›Â˜Â™Â˜
+	if (EquippedWeapon && bUnequipCurrent) { //Â˜Â„Â è‡¾ë‹¿ë¦°åª›Â€ ÂÂˆæ€¨ Â•ëŒÂœ Â”ÂŒÂÂ˜æ´¹ë©¸Â€ trueÂì‡°ãˆƒ
+		UnEquipWeapon(true); //Â˜Â„Â è‡¾ë‹¿ë¦° Â•ëŒÂœ
 	}
-	EquippedWeapon = NewWeapon; //»õ ¹«±â ÀåÂø
-	//¼ÒÀ¯ÀÚ/Ãæµ¹ ±âº» Ã³¸® (**1 ³ªÁß¿¡ È®Àå)
-	EquippedWeapon->SetOwner(OwnerCharacter);//¼ÒÀ¯ÀÚ ¼³Á¤
-	EquippedWeapon->SetInstigator(Cast<APawn>(OwnerCharacter)); //ÀÎ½ºÆ¼°ÔÀÌÅÍ ¼³Á¤
-	EquippedWeapon->SetActorEnableCollision(false); //Ãæµ¹ ºñÈ°¼ºÈ­
-	if (!AttachWeaponToCharacter(EquippedWeapon)) //Ä³¸¯ÅÍ¿¡ ¹«±â ºÎÂø ½ÇÆĞ ½Ã
+	EquippedWeapon = NewWeapon; //ÂƒÂˆ è‡¾ë‹¿ë¦° ÂÎ¼ê°‘
+	//Â†ÂŒÂœÂÂ/ç•°â‘¸ÂŒ æ¹²ê³•ë‚¯ ï§£Â˜ç”± (**1 Â‚Â˜ä»¥Â‘Â—Â Â™Â•Â)
+	EquippedWeapon->SetOwner(OwnerCharacter);//Â†ÂŒÂœÂÂ Â„ã…¼Â•
+	EquippedWeapon->SetInstigator(Cast<APawn>(OwnerCharacter)); //Âëª„ÂŠã…½Â‹ê³ŒÂŒÂëŒ„Â„ Â„ã…¼Â•
+	EquippedWeapon->SetActorEnableCollision(false); //ç•°â‘¸ÂŒ é®Â„Â™ÂœÂ„ê¹ŠÂ™Â”
+	EquippedWeapon->OnEquipped(OwnerCharacter); //è‡¾ë‹¿ë¦° ÂÎ¼ê°‘ ï§£Â˜ç”± Â˜ëª„Âœ
+	if (!AttachWeaponToCharacter(EquippedWeapon)) //ï§¦Âç”±ï¿½Â„ê³—Â—Â è‡¾ë‹¿ë¦° éºÂ€ï§¡ Â‹ã…½ÂŒ Â‹Âœ
 	{
-		EquippedWeapon->OnUnequipped(true); //¹«±â ÇØÁ¦ Ã³¸® È£Ãâ
-		EquippedWeapon = nullptr; //ÀåÂø ½ÇÆĞ ½Ã ¹«±â ÃÊ±âÈ­
-		SetWeaponType(EQPWeaponType::EWT_None); //¹«±â Å¸ÀÔ ¾øÀ½À¸·Î ¼³Á¤
-		return false; //false ¹İÈ¯
+		EquippedWeapon->OnUnequipped(true); //è‡¾ë‹¿ë¦° Â•ëŒÂœ ï§£Â˜ç”± Â˜ëª„Âœ
+		EquippedWeapon = nullptr; //ÂÎ¼ê°‘ Â‹ã…½ÂŒ Â‹Âœ è‡¾ë‹¿ë¦° ç¥Âˆæ¹²ê³ Â™Â”
+		SetWeaponType(EQPWeaponType::EWT_None); //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… Â—Â†ÂÂŒÂœì‡°Âœ Â„ã…¼Â•
+		return false; //false è«›Â˜Â™Â˜
 	}
-	SetWeaponType(NewWeapon->GetWeaponType()); //¹«±â Å¸ÀÔ ¼³Á¤ //**2 WeaponBase¿¡¼­ GetWeaponType() ±¸Çö ÇÊ¿ä
-	return true; //¼º°øÀûÀ¸·Î ÀåÂøÇßÀ¸¹Ç·Î true ¹İÈ¯
+	SetWeaponType(NewWeapon->GetWeaponType()); //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… Â„ã…¼Â• //**2 WeaponBaseÂ—ÂÂ„Âœ GetWeaponType() æ´Ñ‹Â˜Â„ Â•Â„ÂšÂ”
+	return true; //Â„ê¹ƒë‚¬ï¿½ÂÂœì‡°Âœ ÂÎ¼ê°‘Â–ÂˆÂœì‡°Â€æ¿¡Âœ true è«›Â˜Â™Â˜
 }
 
 bool UQPCombatComponent::UnEquipWeapon(bool bDropToWorld)
 {
 	if (!OwnerCharacter || !EquippedWeapon) {
-		SetWeaponType(EQPWeaponType::EWT_None); //¹«±â Å¸ÀÔ ¾øÀ½À¸·Î ¼³Á¤
-		return false; //¼ÒÀ¯ÇÑ Ä³¸¯ÅÍ³ª ÀåÂøµÈ ¹«±â°¡ ¾øÀ¸¸é false ¹İÈ¯
+		SetWeaponType(EQPWeaponType::EWT_None); //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… Â—Â†ÂÂŒÂœì‡°Âœ Â„ã…¼Â•
+		return false; //Â†ÂŒÂœÂ•Âœ ï§¦Âç”±ï¿½Â„ê³•Â‚Â˜ ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦°åª›Â€ Â—Â†Âœì‡°ãˆƒ false è«›Â˜Â™Â˜
 	}
-	StopAttack(); //°ø°İ ÁßÁö
-	//Ä³¸¯ÅÍ ºĞ¸®
-	EquippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); //¿ùµå Æ®·£½ºÆû À¯ÁöÇÏ¸ç ºĞ¸®
-	EquippedWeapon->SetActorEnableCollision(bDropToWorld); //Ãæµ¹ ¼³Á¤
-	EquippedWeapon->OnUnequipped(bDropToWorld); //¹«±â ÇØÁ¦ Ã³¸® È£Ãâ
-	EquippedWeapon = nullptr; //ÀåÂøµÈ ¹«±â ÃÊ±âÈ­
+	StopAttack(); //æ€¨ë“¦êº½ ä»¥Â‘ï§Â€
+	//ï§¦Âç”±ï¿½Â„ éºÂ„ç”±
+	EquippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); //Â›Â”Â“Âœ ÂŠëªƒÂÂœÂŠã…½ Âœï§Â€Â•Â˜ï§ éºÂ„ç”±
+	EquippedWeapon->OnUnequipped(bDropToWorld); //è‡¾ë‹¿ë¦° Â•ëŒÂœ ï§£Â˜ç”± Â˜ëª„Âœ
+	EquippedWeapon = nullptr; //ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦° ç¥Âˆæ¹²ê³ Â™Â”
 
-	SetWeaponType(EQPWeaponType::EWT_None); //¹«±â Å¸ÀÔ ¾øÀ½À¸·Î ¼³Á¤
-	return true; //¼º°øÀûÀ¸·Î ÇØÁ¦ÇßÀ¸¹Ç·Î true ¹İÈ¯
+	SetWeaponType(EQPWeaponType::EWT_None); //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… Â—Â†ÂÂŒÂœì‡°Âœ Â„ã…¼Â•
+	return true; //Â„ê¹ƒë‚¬ï¿½ÂÂœì‡°Âœ Â•ëŒÂœÂ–ÂˆÂœì‡°Â€æ¿¡Âœ true è«›Â˜Â™Â˜
 }
 void UQPCombatComponent::StartAttack()
 {
 	if (!EquippedWeapon) {
-		SetIsAttacking(false); //°ø°İ »óÅÂ false·Î ¼³Á¤
-		return; //ÀåÂøµÈ ¹«±â°¡ ¾øÀ¸¸é ¹İÈ¯
+		SetIsAttacking(false); //æ€¨ë“¦êº½ ÂƒÂÂƒÂœ falseæ¿¡Âœ Â„ã…¼Â•
+		return; //ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦°åª›Â€ Â—Â†Âœì‡°ãˆƒ è«›Â˜Â™Â˜
 	}
-	SetIsAttacking(true); //°ø°İ »óÅÂ true·Î ¼³Á¤
-	EquippedWeapon->StartFire(); //¹«±â ¹ß»ç ½ÃÀÛ
+	SetIsAttacking(true); //æ€¨ë“¦êº½ ÂƒÂÂƒÂœ trueæ¿¡Âœ Â„ã…¼Â•
+	EquippedWeapon->StartFire(); //è‡¾ë‹¿ë¦° è«›ÂœÂ‚ Â‹ÂœÂÂ‘
 }
 void UQPCombatComponent::StopAttack()
 {
 	if (EquippedWeapon) {
-		EquippedWeapon->StopAttack(); //¹«±â °ø°İ ÁßÁö
+		EquippedWeapon->StopAttack(); //è‡¾ë‹¿ë¦° æ€¨ë“¦êº½ ä»¥Â‘ï§Â€
 	}
-	SetIsAttacking(false); //°ø°İ »óÅÂ false·Î ¼³Á¤
+	SetIsAttacking(false); //æ€¨ë“¦êº½ ÂƒÂÂƒÂœ falseæ¿¡Âœ Â„ã…¼Â•
 }
 void UQPCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -76,23 +76,23 @@ void UQPCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 bool UQPCombatComponent::AttachWeaponToCharacter(AWeaponBase* Weapon)
 {
-	if (!OwnerCharacter || !Weapon) return false; //¼ÒÀ¯ÇÑ Ä³¸¯ÅÍ³ª ¹«±â°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é false ¹İÈ¯
-	USkeletalMeshComponent* MeshComponent = OwnerCharacter->GetMesh(); //Ä³¸¯ÅÍÀÇ ½ºÄÌ·¹Å» ¸Ş½¬ ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
-	if (!MeshComponent) return false; //¸Ş½¬ ÄÄÆ÷³ÍÆ®°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é false ¹İÈ¯
-	Weapon->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, EquipSocketName); //¹«±â¸¦ Ä³¸¯ÅÍ ¸Ş½¬¿¡ ºÎÂø
-	return true; //¼º°øÀûÀ¸·Î ºÎÂøÇßÀ¸¹Ç·Î true ¹İÈ¯
+	if (!OwnerCharacter || !Weapon) return false; //Â†ÂŒÂœÂ•Âœ ï§¦Âç”±ï¿½Â„ê³•Â‚Â˜ è‡¾ë‹¿ë¦°åª›Â€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ false è«›Â˜Â™Â˜
+	USkeletalMeshComponent* MeshComponent = OwnerCharacter->GetMesh(); //ï§¦Âç”±ï¿½Â„ê³—ÂÂ˜ ÂŠã…¼Âˆï¿½ÂˆÂƒÂˆ ï§Â”Â‰ è€ŒëŒ„Ñ‰Â„ÂŒÂŠ åª›Â€ï¿½ëª„Â˜ã…ºë¦°
+	if (!MeshComponent) return false; //ï§Â”Â‰ è€ŒëŒ„Ñ‰Â„ÂŒÂŠë©¸Â€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ false è«›Â˜Â™Â˜
+	Weapon->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, EquipSocketName); //è‡¾ë‹¿ë¦°ç‘œ ï§¦Âç”±ï¿½Â„ ï§Â”Â‰ÑŠÂ—Â éºÂ€ï§¡
+	return true; //Â„ê¹ƒë‚¬ï¿½ÂÂœì‡°Âœ éºÂ€ï§¡â‘ºÂ–ÂˆÂœì‡°Â€æ¿¡Âœ true è«›Â˜Â™Â˜
 }
 
 void UQPCombatComponent::SetWeaponType(EQPWeaponType NewType)
 {
-	if (EquippedWeaponType == NewType) return; //ÀÌ¹Ì °°Àº Å¸ÀÔÀÌ¸é ¹İÈ¯
-	EquippedWeaponType = NewType; //¹«±â Å¸ÀÔ ¼³Á¤
-	OnWeaponTypeChanged.Broadcast(EquippedWeaponType); //¹«±â Å¸ÀÔ º¯°æ µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+	if (EquippedWeaponType == NewType) return; //ÂëŒ€ï¿½ åª›Â™ÂÂ€ ÂƒÂ€ÂÂ…ÂëŒ€ãˆƒ è«›Â˜Â™Â˜
+	EquippedWeaponType = NewType; //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… Â„ã…¼Â•
+	OnWeaponTypeChanged.Broadcast(EquippedWeaponType); //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… è¹‚Â€å¯ƒ Âëªƒâ”å¯ƒÂŒÂëŒ„ÂŠ é‡‰ÂŒæ¿¡ÂœÂ“Âœï§¦ÂÂŠã…½ÂŠ
 }
 void UQPCombatComponent::SetIsAttacking(bool bNewIsAttacking)
 {
-	if (bIsAttacking == bNewIsAttacking) return; //ÀÌ¹Ì °°Àº »óÅÂÀÌ¸é ¹İÈ¯
-	bIsAttacking = bNewIsAttacking; //°ø°İ »óÅÂ ¼³Á¤
-	OnAttackStateChanged.Broadcast(bIsAttacking); //°ø°İ »óÅÂ º¯°æ µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+	if (bIsAttacking == bNewIsAttacking) return; //ÂëŒ€ï¿½ åª›Â™ÂÂ€ ÂƒÂÂƒÂœÂëŒ€ãˆƒ è«›Â˜Â™Â˜
+	bIsAttacking = bNewIsAttacking; //æ€¨ë“¦êº½ ÂƒÂÂƒÂœ Â„ã…¼Â•
+	OnAttackStateChanged.Broadcast(bIsAttacking); //æ€¨ë“¦êº½ ÂƒÂÂƒÂœ è¹‚Â€å¯ƒ Âëªƒâ”å¯ƒÂŒÂëŒ„ÂŠ é‡‰ÂŒæ¿¡ÂœÂ“Âœï§¦ÂÂŠã…½ÂŠ
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+ç™¤#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -17,31 +17,31 @@ class PJ_QUIET_PROTOCOL_API AWeaponBase : public AActor
 public:	
 	AWeaponBase();
 	UFUNCTION(BlueprintPure, Category="Weapon")
-	FORCEINLINE EQPWeaponType GetWeaponType() const { return WeaponType; } //¹«±â Å¸ÀÔ ¹İÈ¯ ÇÔ¼ö
+	FORCEINLINE EQPWeaponType GetWeaponType() const { return WeaponType; } //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… è«›Â˜Â™Â˜ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintPure, Category="Weapon")
-	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; } //¹«±â ¸Ş½¬ ¹İÈ¯ ÇÔ¼ö
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; } //è‡¾ë‹¿ë¦° ï§Â”Â‰ è«›Â˜Â™Â˜ Â•â‘¥ÂˆÂ˜
 
 	UFUNCTION(BlueprintCallable, Category="Weapon")
-	virtual void OnEquipped(ACharacter* NewOwner); //¹«±â ÀåÂø ½Ã È£Ãâ ÇÔ¼ö
+	virtual void OnEquipped(ACharacter* NewOwner); //è‡¾ë‹¿ë¦° ÂÎ¼ê°‘ Â‹Âœ Â˜ëª„Âœ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void OnUnequipped(bool bDropToWorld); //¹«±â ÇØÁ¦ ½Ã È£Ãâ ÇÔ¼ö
+	virtual void OnUnequipped(bool bDropToWorld); //è‡¾ë‹¿ë¦° Â•ëŒÂœ Â‹Âœ Â˜ëª„Âœ Â•â‘¥ÂˆÂ˜
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Weapon")
-	void StartFire(); //¹ß»ç ½ÃÀÛ ÇÔ¼ö
-	virtual void StartFire_Implementation(); //±âº» ±¸Çö
+	void StartFire(); //è«›ÂœÂ‚ Â‹ÂœÂÂ‘ Â•â‘¥ÂˆÂ˜
+	virtual void StartFire_Implementation(); //æ¹²ê³•ë‚¯ æ´Ñ‹Â˜Â„
 	UFUNCTION(BlueprintNativeEvent, Category = "Weapon")
-	void StopAttack(); //°ø°İ ÁßÁö ÇÔ¼ö
-	virtual void StopAttack_Implementation(); //±âº» ±¸Çö
+	void StopAttack(); //æ€¨ë“¦êº½ ä»¥Â‘ï§Â€ Â•â‘¥ÂˆÂ˜
+	virtual void StopAttack_Implementation(); //æ¹²ê³•ë‚¯ æ´Ñ‹Â˜Â„
 protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon")
-	TObjectPtr<USkeletalMeshComponent> WeaponMesh; //¹«±â ¸Ş½¬ ÄÄÆ÷³ÍÆ® // TObjectPtr - ÀÚµ¿ null Ã³¸®
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh; //è‡¾ë‹¿ë¦° ï§Â”Â‰ è€ŒëŒ„Ñ‰Â„ÂŒÂŠ // TObjectPtr - ÂÂÂ™ null ï§£Â˜ç”±
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	EQPWeaponType WeaponType = EQPWeaponType::EWT_None; //¹«±â Å¸ÀÔ
+	EQPWeaponType WeaponType = EQPWeaponType::EWT_None; //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ…
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon|Damage", meta = (ClampMin= "0.0"))
-	float BaseDamage = 10.f; //±âº» µ¥¹ÌÁö
+	float BaseDamage = 10.f; //æ¹²ê³•ë‚¯ Âê³•ï¿½ï§Â€
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Damage")
-	TSubclassOf<UDamageType> DamageTypeClass; //µ¥¹ÌÁö Å¸ÀÔ Å¬·¡½º
+	TSubclassOf<UDamageType> DamageTypeClass; //Âê³•ï¿½ï§Â€ ÂƒÂ€ÂÂ… ÂëŒ€ÂÂ˜ÂŠ
 
 public:	
 	virtual void Tick(float DeltaTime) override;

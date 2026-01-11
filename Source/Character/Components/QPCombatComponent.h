@@ -1,34 +1,34 @@
-#pragma once
+ç™¤#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PJ_Quiet_Protocol/Commons/QPCombatTypes.h"
 #include "QPCombatComponent.generated.h"
 
-class AWeaponBase; //Àü¹æ ¼±¾ğ
-class ACharacter; //Àü¹æ ¼±¾ğ
+class AWeaponBase; //ï¿½Â„è«› Â„Â–
+class ACharacter; //ï¿½Â„è«› Â„Â–
 
 /**
-¹«±â Å¸ÀÔÀÌ º¯°æµÉ ¶§ ºê·ÎµåÄ³½ºÆ®µÇ´Â µ¨¸®°ÔÀÌÆ®
-È£Ãâ ½ÃÁ¡: SetWeaponType() ÇÔ¼ö¿¡¼­ EquippedWeaponTypeÀÌ ½ÇÁ¦·Î º¯°æµÉ ¶§
-ÁÖ¿ä ¿ëµµ:
-UI ¾÷µ¥ÀÌÆ® (¹«±â ¾ÆÀÌÄÜ, Åº¾à Ç¥½Ã µî)
-¾Ö´Ï¸ŞÀÌ¼Ç ºí·çÇÁ¸°Æ®¿¡¼­ ¹«±âº° ¾Ö´Ï¸ŞÀÌ¼Ç ÀüÈ¯
-»ç¿îµå/ÀÌÆåÆ® ½Ã½ºÅÛ¿¡ ¹«±â º¯°æ ¾Ë¸²
-@param NewWeaponType »õ·Î ÀåÂøµÈ ¹«±âÀÇ Å¸ÀÔ (EQPWeaponType)
+è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ…Â è¹‚Â€å¯ƒìˆÂ Â•ÂŒ é‡‰ÂŒæ¿¡ÂœÂ“Âœï§¦ÂÂŠã…½ÂŠëªƒÂÂ˜ÂŠÂ” Âëªƒâ”å¯ƒÂŒÂëŒ„ÂŠ
+Â˜ëª„Âœ Â‹Âœï¿½Â: SetWeaponType() Â•â‘¥ÂˆÂ˜Â—ÂÂ„Âœ EquippedWeaponTypeÂ Â‹ã…¼Âœæ¿¡Âœ è¹‚Â€å¯ƒìˆÂ Â•ÂŒ
+äºŒì‡±ÂšÂ” Âšâ‘¸Â„:
+UI Â—Â…Âê³—ÂëŒ„ÂŠ (è‡¾ë‹¿ë¦° Â•Â„ÂëŒÂ˜, ÂƒÂ„Â• Â‘ÂœÂ‹Âœ Â“)
+Â•Â‹Âˆï§Â”ÂëŒÂ…Â˜ é‡‰Â”çŒ·â‘¦Â”Â„ç”±ê³ ÂŠëª„Â—ÂÂ„Âœ è‡¾ë‹¿ë¦°è¹‚Â„ Â•Â‹Âˆï§Â”ÂëŒÂ…Â˜ ï¿½Â„Â™Â˜
+Â‚ÑŠÂšëŒ€Â“Âœ/ÂëŒ„Â™ÂŠ Â‹ÂœÂŠã…½Â…ÂœÂ—Â è‡¾ë‹¿ë¦° è¹‚Â€å¯ƒ Â•ÂŒç”±
+@param NewWeaponType ÂƒÂˆæ¿¡Âœ ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦°ÂÂ˜ ÂƒÂ€ÂÂ… (EQPWeaponType)
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponTypeChanged, 
-	EQPWeaponType, NewWeaponType); //¹«±â ÀåÂø µ¨¸®°ÔÀÌÆ® ¼±¾ğ
+	EQPWeaponType, NewWeaponType); //è‡¾ë‹¿ë¦° ÂÎ¼ê°‘ Âëªƒâ”å¯ƒÂŒÂëŒ„ÂŠ Â„Â–
 /**
-°ø°İ »óÅÂ°¡ º¯°æµÉ ¶§ ºê·ÎµåÄ³½ºÆ®µÇ´Â µ¨¸®°ÔÀÌÆ®
-È£Ãâ ½ÃÁ¡: Ä³¸¯ÅÍ°¡ °ø°İÀ» ½ÃÀÛÇÏ°Å³ª ¸ØÃâ ¶§
-ÁÖ¿ä ¿ëµµ:
-UI ¾÷µ¥ÀÌÆ® (°ø°İ ¸ğ¼Ç Ç¥½Ã µî)
-¾Ö´Ï¸ŞÀÌ¼Ç ºí·çÇÁ¸°Æ®¿¡¼­ °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç ÀüÈ¯
-»ç¿îµå/ÀÌÆåÆ® ½Ã½ºÅÛ¿¡ °ø°İ »óÅÂ º¯°æ ¾Ë¸²
-@param bNewIsAttacking »õ·Î¿î °ø°İ »óÅÂ (true: °ø°İ Áß, false: ºñ°ø°İ Áß)
+æ€¨ë“¦êº½ ÂƒÂÂƒÂœåª›Â€ è¹‚Â€å¯ƒìˆÂ Â•ÂŒ é‡‰ÂŒæ¿¡ÂœÂ“Âœï§¦ÂÂŠã…½ÂŠëªƒÂÂ˜ÂŠÂ” Âëªƒâ”å¯ƒÂŒÂëŒ„ÂŠ
+Â˜ëª„Âœ Â‹Âœï¿½Â: ï§¦Âç”±ï¿½Â„ê³ŒÂ€ æ€¨ë“¦êº½ÂÂ„ Â‹ÂœÂÂ‘Â•Â˜å«„ê³•Â‚Â˜ ï§Âˆç•°Âœ Â•ÂŒ
+äºŒì‡±ÂšÂ” Âšâ‘¸Â„:
+UI Â—Â…Âê³—ÂëŒ„ÂŠ (æ€¨ë“¦êº½ ï§â‘¥Â…Â˜ Â‘ÂœÂ‹Âœ Â“)
+Â•Â‹Âˆï§Â”ÂëŒÂ…Â˜ é‡‰Â”çŒ·â‘¦Â”Â„ç”±ê³ ÂŠëª„Â—ÂÂ„Âœ æ€¨ë“¦êº½ Â•Â‹Âˆï§Â”ÂëŒÂ…Â˜ ï¿½Â„Â™Â˜
+Â‚ÑŠÂšëŒ€Â“Âœ/ÂëŒ„Â™ÂŠ Â‹ÂœÂŠã…½Â…ÂœÂ—Â æ€¨ë“¦êº½ ÂƒÂÂƒÂœ è¹‚Â€å¯ƒ Â•ÂŒç”±
+@param bNewIsAttacking ÂƒÂˆæ¿¡ÂœÂš æ€¨ë“¦êº½ ÂƒÂÂƒÂœ (true: æ€¨ë“¦êº½ ä»¥Â‘, false: é®Â„æ€¨ë“¦êº½ ä»¥Â‘)
  */ 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttackStateChanged, bool, bNewIsAttacking);//°ø°İ »óÅÂ º¯°æ µ¨¸®°ÔÀÌÆ® ¼±¾ğ
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttackStateChanged, bool, bNewIsAttacking);//æ€¨ë“¦êº½ ÂƒÂÂƒÂœ è¹‚Â€å¯ƒ Âëªƒâ”å¯ƒÂŒÂëŒ„ÂŠ Â„Â–
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PJ_QUIET_PROTOCOL_API UQPCombatComponent : public UActorComponent
@@ -37,25 +37,25 @@ class PJ_QUIET_PROTOCOL_API UQPCombatComponent : public UActorComponent
 
 public:	
 	UQPCombatComponent();
-	//¹«±â ±â´É
+	//è‡¾ë‹¿ë¦° æ¹²ê³•ÂŠ
 	UFUNCTION(BlueprintCallable, Category="Combat|Weapon")
-	bool EquipWeapon(AWeaponBase* NewWeapon, bool bUnequipCurrent = true); //¹«±â ÀåÂø ÇÔ¼ö
+	bool EquipWeapon(AWeaponBase* NewWeapon, bool bUnequipCurrent = true); //è‡¾ë‹¿ë¦° ÂÎ¼ê°‘ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintCallable, Category="Combat|Weapon")
-	bool UnEquipWeapon(bool bDropToWorld = true); //¹«±â ÇØÁ¦ ÇÔ¼ö
+	bool UnEquipWeapon(bool bDropToWorld = true); //è‡¾ë‹¿ë¦° Â•ëŒÂœ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintPure, Category="Combat|Weapon")
-	FORCEINLINE AWeaponBase* GetEquippedWeapon() const { return EquippedWeapon; } //ÀåÂøµÈ ¹«±â ¹İÈ¯ ÇÔ¼ö
+	FORCEINLINE AWeaponBase* GetEquippedWeapon() const { return EquippedWeapon; } //ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦° è«›Â˜Â™Â˜ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintPure, Category = "Combat|Weapon") 
-	FORCEINLINE EQPWeaponType GetEquippedWeaponType() const { return EquippedWeaponType; } //ÀåÂøµÈ ¹«±â Å¸ÀÔ ¹İÈ¯ ÇÔ¼ö
+	FORCEINLINE EQPWeaponType GetEquippedWeaponType() const { return EquippedWeaponType; } //ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… è«›Â˜Â™Â˜ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintPure, Category="Combat|Weapon")
-	FORCEINLINE bool HasWeapon() const { return EquippedWeapon != nullptr; } //¹«±â ÀåÂø ¿©ºÎ ¹İÈ¯ ÇÔ¼ö
+	FORCEINLINE bool HasWeapon() const { return EquippedWeapon != nullptr; } //è‡¾ë‹¿ë¦° ÂÎ¼ê°‘ Â—Ñ‰Â€ è«›Â˜Â™Â˜ Â•â‘¥ÂˆÂ˜
 
-	//°ø°İ ±â´É
+	//æ€¨ë“¦êº½ æ¹²ê³•ÂŠ
 	UFUNCTION(BlueprintCallable, Category = "Combat|Attack")
-	void StartAttack(); //°ø°İ ½ÃÀÛ ÇÔ¼ö
+	void StartAttack(); //æ€¨ë“¦êº½ Â‹ÂœÂÂ‘ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintCallable, Category = "Combat|Attack")
-	void StopAttack(); //°ø°İ ÁßÁö ÇÔ¼ö
+	void StopAttack(); //æ€¨ë“¦êº½ ä»¥Â‘ï§Â€ Â•â‘¥ÂˆÂ˜
 	UFUNCTION(BlueprintPure, Category = "Combat|Attack")
-	FORCEINLINE bool IsAttacking() const { return bIsAttacking; } //°ø°İ ÁßÀÎÁö ¿©ºÎ ¹İÈ¯ ÇÔ¼ö
+	FORCEINLINE bool IsAttacking() const { return bIsAttacking; } //æ€¨ë“¦êº½ ä»¥Â‘Âëª„Â€ Â—Ñ‰Â€ è«›Â˜Â™Â˜ Â•â‘¥ÂˆÂ˜
 	UPROPERTY(BlueprintAssignable, Category="Combat")
 	FOnAttackStateChanged OnAttackStateChanged;
 	UPROPERTY(BlueprintAssignable, Category="Combat")
@@ -65,17 +65,17 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 private:
-	bool AttachWeaponToCharacter(AWeaponBase* Weapon); //Ä³¸¯ÅÍ¿¡ ¹«±â ºÎÂø ÇÔ¼ö
-	void SetWeaponType(EQPWeaponType NewType); //¹«±â Å¸ÀÔ ¼³Á¤ ÇÔ¼ö
-	void SetIsAttacking(bool bNewIsAttacking); //°ø°İ »óÅÂ ¼³Á¤ ÇÔ¼ö
+	bool AttachWeaponToCharacter(AWeaponBase* Weapon); //ï§¦Âç”±ï¿½Â„ê³—Â—Â è‡¾ë‹¿ë¦° éºÂ€ï§¡ Â•â‘¥ÂˆÂ˜
+	void SetWeaponType(EQPWeaponType NewType); //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ… Â„ã…¼Â• Â•â‘¥ÂˆÂ˜
+	void SetIsAttacking(bool bNewIsAttacking); //æ€¨ë“¦êº½ ÂƒÂÂƒÂœ Â„ã…¼Â• Â•â‘¥ÂˆÂ˜
 	UPROPERTY()
-	ACharacter* OwnerCharacter=nullptr; //¼ÒÀ¯ÇÑ Ä³¸¯ÅÍ
+	ACharacter* OwnerCharacter=nullptr; //Â†ÂŒÂœÂ•Âœ ï§¦Âç”±ï¿½Â„
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat|Weapon", meta = (AllowPrivateAccess = "true"))
-	AWeaponBase* EquippedWeapon=nullptr; //ÀåÂøµÈ ¹«±â
+	AWeaponBase* EquippedWeapon=nullptr; //ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦°
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|Weapon", meta = (AllowPrivateAccess = "true"))
-	EQPWeaponType EquippedWeaponType = EQPWeaponType::EWT_None; //ÀåÂøµÈ ¹«±â Å¸ÀÔ
+	EQPWeaponType EquippedWeaponType = EQPWeaponType::EWT_None; //ÂÎ¼ê°‘ÂÂœ è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ…
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat|Weapon", meta = (AllowPrivateAccess = "true"))
-	FName EquipSocketName = TEXT("WeaponSocket"); //¹«±â ÀåÂø ¼ÒÄÏ ÀÌ¸§
+	FName EquipSocketName = TEXT("WeaponSocket"); //è‡¾ë‹¿ë¦° ÂÎ¼ê°‘ Â†ÂŒè€³Â“ ÂëŒ€Â„
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|Attack", meta = (AllowPrivateAccess = "true"))
-	bool bIsAttacking = false; //°ø°İ ÁßÀÎÁö ¿©ºÎ
+	bool bIsAttacking = false; //æ€¨ë“¦êº½ ä»¥Â‘Âëª„Â€ Â—Ñ‰Â€
 };

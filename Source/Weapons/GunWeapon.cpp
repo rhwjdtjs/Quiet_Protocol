@@ -1,62 +1,64 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ç™¤// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "GunWeapon.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/PlayerCameraManager.h"
 
 AGunWeapon::AGunWeapon()
 {
-	WeaponType = EQPWeaponType::EWT_Gun; //¹«±â Å¸ÀÔÀ» ÃÑ±â·Î ¼³Á¤
+	WeaponType = EQPWeaponType::EWT_Gun; //è‡¾ë‹¿ë¦° ÂƒÂ€ÂÂ…ÂÂ„ ç¥Âæ¹²ê³•Âœ Â„ã…¼Â•
 }
 
-void AGunWeapon::StartFire_Implementation() //¹ß»ç ½ÃÀÛ ÇÔ¼ö ÀçÁ¤ÀÇ
+void AGunWeapon::StartFire_Implementation() //è«›ÂœÂ‚ Â‹ÂœÂÂ‘ Â•â‘¥ÂˆÂ˜ ÂÑŠÂ•ÂÂ˜
 {
-	if (bAutomatic) { //ÀÚµ¿ ¹ß»ç ¸ğµåÀÎ °æ¿ì
-		FireOnce(); //ÇÑ ¹ø ¹ß»ç
-		if (UWorld* World = GetWorld()) //¿ùµå°¡ À¯È¿ÇÑÁö È®ÀÎ
+	if (bAutomatic) { //ÂÂÂ™ è«›ÂœÂ‚ ï§â‘¤Â“ÂœÂ å¯ƒìŒÂš
+		FireOnce(); //Â•Âœ è¸°Âˆ è«›ÂœÂ‚
+		if (UWorld* World = GetWorld()) //Â›Â”Â“Âœåª›Â€ ÂœÂšâ‘¦Â•Âœï§Â€ Â™Â•Â
 		{
-			World->GetTimerManager().SetTimer(TimerHandle_AutoFire, this, &AGunWeapon::FireOnce, FireRate, true); //Å¸ÀÌ¸Ó ¼³Á¤ÇÏ¿© ÀÏÁ¤ °£°İÀ¸·Î ¹ß»ç
+			World->GetTimerManager().SetTimer(TimerHandle_AutoFire, this, &AGunWeapon::FireOnce, FireRate, true); //ÂƒÂ€ÂëŒ€ã‰§ Â„ã…¼Â•Â•Â˜Â— Âì‡±Â• åª›Â„å¯ƒâ‘¹Âœì‡°Âœ è«›ÂœÂ‚
 		}
 	}
 	else {
-		FireOnce(); //ÀÚµ¿ ¹ß»ç ¸ğµå°¡ ¾Æ´Ñ °æ¿ì ÇÑ ¹ø ¹ß»ç
+		FireOnce(); //ÂÂÂ™ è«›ÂœÂ‚ ï§â‘¤Â“Âœåª›Â€ Â•Â„Â‹ÂŒ å¯ƒìŒÂš Â•Âœ è¸°Âˆ è«›ÂœÂ‚
 	}
 }
 
-void AGunWeapon::StopAttack_Implementation() //°ø°İ ÁßÁö ÇÔ¼ö ÀçÁ¤ÀÇ
+void AGunWeapon::StopAttack_Implementation() //æ€¨ë“¦êº½ ä»¥Â‘ï§Â€ Â•â‘¥ÂˆÂ˜ ÂÑŠÂ•ÂÂ˜
 {
 	if(UWorld* World = GetWorld())
 	{
-		World->GetTimerManager().ClearTimer(TimerHandle_AutoFire); //ÀÚµ¿ ¹ß»ç Å¸ÀÌ¸Ó ÇØÁ¦
+		World->GetTimerManager().ClearTimer(TimerHandle_AutoFire); //ÂÂÂ™ è«›ÂœÂ‚ ÂƒÂ€ÂëŒ€ã‰§ Â•ëŒÂœ
 	}
 }
 
-//ÀÓ½Ã ÄÚµå ´ÙÀ½¿¡ ÇÁ·ÎÁ§Æ®ÀÏ ¸¸µé¾î¼­ ÃÑ¾Ë ³ª°¡°Ô ¼öÁ¤ ÇöÀç´Â È÷Æ®½ºÄµ
-void AGunWeapon::FireOnce() //ÇÑ ¹ø ¹ß»ç ÇÔ¼ö
+//ÂÂ„Â‹Âœ è‚„Â”Â“Âœ Â‹ã…¼ÂÂŒÂ—Â Â”Â„æ¿¡Âœï¿½ÂÂŠëª„Â ï§ÂŒÂ“ã…¼Â–ëŒÂ„Âœ ç¥ÂÂ•ÂŒ Â‚Â˜åª›Â€å¯ƒÂŒ ÂˆÂ˜ï¿½Â• Â˜Â„ÂÑ‰ÂŠÂ” ÂÂˆÂŠëª„ÂŠã…¼Â”
+void AGunWeapon::FireOnce() //Â•Âœ è¸°Âˆ è«›ÂœÂ‚ Â•â‘¥ÂˆÂ˜
 {
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //¹«±â ¼ÒÀ¯ÀÚ¸¦ Ä³¸¯ÅÍ·Î Ä³½ºÆÃ
-	if (!OwnerCharacter) return; //¼ÒÀ¯ÀÚ°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é ¹İÈ¯
+	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); //è‡¾ë‹¿ë¦° Â†ÂŒÂœÂÂç‘œ ï§¦Âç”±ï¿½Â„ê³•Âœ ï§¦ÂÂŠã…½ÂŒÂ…
+	if (!OwnerCharacter) return; //Â†ÂŒÂœÂÂåª›Â€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ è«›Â˜Â™Â˜
 
-	APlayerController* PlayerController = Cast<APlayerController>(OwnerCharacter->GetController()); //Ä³¸¯ÅÍÀÇ ÄÁÆ®·Ñ·¯¸¦ ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯·Î Ä³½ºÆÃ
-	if (!PlayerController || !PlayerController->PlayerCameraManager) return; //ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯³ª Ä«¸Ş¶ó ¸Å´ÏÀú°¡ À¯È¿ÇÏÁö ¾ÊÀ¸¸é ¹İÈ¯
+	APlayerController* PlayerController = Cast<APlayerController>(OwnerCharacter->GetController()); //ï§¦Âç”±ï¿½Â„ê³—ÂÂ˜ è€Œâ‘¦ÂŠëªƒÂ·ÂŸÑ‰ï¿½ Â”ÂŒï¿½ÂˆÂëŒÂ– è€Œâ‘¦ÂŠëªƒÂ·ÂŸÑ‰Âœ ï§¦ÂÂŠã…½ÂŒÂ…
+	if (!PlayerController || !PlayerController->PlayerCameraManager) return; //Â”ÂŒï¿½ÂˆÂëŒÂ– è€Œâ‘¦ÂŠëªƒÂ·ÂŸÑ‰Â‚Â˜ ç§»ëŒ€Â”Â ï§ã…»Â‹Âˆï¿½Â€åª›Â€ ÂœÂšâ‘¦Â•Â˜ï§Â€ Â•ÂŠÂœì‡°ãˆƒ è«›Â˜Â™Â˜
 
-	const FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); //Ä«¸Ş¶ó À§Ä¡¸¦ ½ÃÀÛ ÁöÁ¡À¸·Î ¼³Á¤
-	const FVector Dir = PlayerController->PlayerCameraManager->GetCameraRotation().Vector(); //Ä«¸Ş¶ó È¸Àü ¹æÇâÀ» ¹ß»ç ¹æÇâÀ¸·Î ¼³Á¤
-	const FVector End = Start + (Dir * Range); //»ç°Å¸®¸¸Å­ ¶³¾îÁø ÁöÁ¡À» ³¡ ÁöÁ¡À¸·Î ¼³Á¤
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(GunFire), false); //Ãæµ¹ Äõ¸® ÆÄ¶ó¹ÌÅÍ ¼³Á¤
-	Params.AddIgnoredActor(this); //ÀÚ±â ÀÚ½Å ¹«½Ã
-	Params.AddIgnoredActor(OwnerCharacter); //¼ÒÀ¯ÀÚ ¹«½Ã
-	FHitResult Hit; //È÷Æ® °á°ú º¯¼ö
-	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params); //¶óÀÎ Æ®·¹ÀÌ½º ¼öÇà
-	const FVector TraceEnd = bHit ? Hit.ImpactPoint : End; //È÷Æ® ¿©ºÎ¿¡ µû¶ó Æ®·¹ÀÌ½º ³¡ ÁöÁ¡ ¼³Á¤
-	DrawDebugLine(GetWorld(), Start, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f); //µğ¹ö±× ¶óÀÎ ±×¸®±â
-	if(bHit && Hit.GetActor()) //È÷Æ®ÇßÀ¸¸ç È÷Æ®ÇÑ ¾×ÅÍ°¡ À¯È¿ÇÑ °æ¿ì
+	const FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); //ç§»ëŒ€Â”Â ÂœÂ„ç§»Â˜ç‘œ Â‹ÂœÂÂ‘ ï§Â€ï¿½ÂÂœì‡°Âœ Â„ã…¼Â•
+	const FVector Dir = PlayerController->PlayerCameraManager->GetCameraRotation().Vector(); //ç§»ëŒ€Â”Â ÂšÂŒï¿½Â„ è«›â‘ºÂ–Î¼ÂÂ„ è«›ÂœÂ‚ è«›â‘ºÂ–Î¼Âœì‡°Âœ Â„ã…¼Â•
+	const FVector End = Start + (Dir * Range); //Â‚Ñˆêµ…ç”±Ñ‰ÂŒÂ Â–â‘¥Â–ëŒÂ„ ï§Â€ï¿½ÂÂÂ„ ÂÂ ï§Â€ï¿½ÂÂœì‡°Âœ Â„ã…¼Â•
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(GunFire), false); //ç•°â‘¸ÂŒ è‘ì‡°â” ÂŒÂŒÂì‡°ï¿½Â„ Â„ã…¼Â•
+	Params.AddIgnoredActor(this); //ÂÂæ¹² ÂÂÂ‹ è‡¾ëŒÂ‹Âœ
+	Params.AddIgnoredActor(OwnerCharacter); //Â†ÂŒÂœÂÂ è‡¾ëŒÂ‹Âœ
+	FHitResult Hit; //ÂÂˆÂŠ å¯ƒê³Œë‚µ è¹‚Â€ÂˆÂ˜
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params); //Âì‡±Â ÂŠëªƒÂˆÂëŒÂŠ ÂˆÂ˜Â–Â‰
+	const FVector TraceEnd = bHit ? Hit.ImpactPoint : End; //ÂÂˆÂŠ Â—Ñ‰Â€Â—Â Â”ê³•Â ÂŠëªƒÂˆÂëŒÂŠ ÂÂ ï§Â€ï¿½Â Â„ã…¼Â•
+	DrawDebugLine(GetWorld(), Start, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f); //Â”Â”è¸°Â„æ´¹ Âì‡±Â æ´¹ëªƒâ”æ¹²
+	
+	if(bHit && Hit.GetActor()) //ÂÂˆÂŠëª…Â–ÂˆÂœì‡°Å‰ ÂÂˆÂŠëª…Â•Âœ Â•â‰«Â„ê³ŒÂ€ ÂœÂšâ‘¦Â•Âœ å¯ƒìŒÂš
 	{
-		UGameplayStatics::ApplyPointDamage(Hit.GetActor(), BaseDamage, Dir, Hit, OwnerCharacter->GetInstigatorController(), this, DamageTypeClass); //µ¥¹ÌÁö Àû¿ë
+		
+		UGameplayStatics::ApplyPointDamage(Hit.GetActor(), BaseDamage, Dir, Hit, OwnerCharacter->GetInstigatorController(), this, DamageTypeClass);//Âê³•ï¿½ï§Â€ ï¿½ÂÂš
+		
 	}
 }

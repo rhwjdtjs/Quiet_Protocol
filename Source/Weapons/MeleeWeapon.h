@@ -1,4 +1,4 @@
-#pragma once
+ç™¤#pragma once
 
 #include "CoreMinimal.h"
 #include "WeaponBase.h"
@@ -13,14 +13,14 @@ class PJ_QUIET_PROTOCOL_API AMeleeWeapon : public AWeaponBase
 	GENERATED_BODY()
 	
 public:
-	AMeleeWeapon(); //»ı¼ºÀÚ
+	AMeleeWeapon(); //ÂƒÂÂ„ê¹†ÂÂ
 
-	virtual void StartFire_Implementation() override; //°ø°İ ½ÃÀÛ ÇÔ¼ö ÀçÁ¤ÀÇ
+	virtual void StartFire_Implementation() override; //æ€¨ë“¦êº½ Â‹ÂœÂÂ‘ Â•â‘¥ÂˆÂ˜ ÂÑŠÂ•ÂÂ˜
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Melee", meta = (ClampMin = "0.0"))
-	float SwingRange = 180.f; //½ºÀ® ¹üÀ§
+	float SwingRange = 180.f; //ÂŠã…¼ÂœÂ™ è¸°Â”ÂœÂ„
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Melee", meta = (ClampMin = "0.0"))
-	float SwingRadius = 40.f; //½ºÀ® ¹İ°æ
+	float SwingRadius = 40.f; //ÂŠã…¼ÂœÂ™ è«›Â˜å¯ƒ
 
 };
