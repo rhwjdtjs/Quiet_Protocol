@@ -3,55 +3,63 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DrawDebugHelpers.h"
 #include "PJ_Quiet_Protocol/Character/Components/QPCombatComponent.h"
+#include "PJ_Quiet_Protocol/Weapons/WeaponBase.h"
+
 AQPCharacter::AQPCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bUseControllerRotationYaw = false; //ÄÁÆ®·Ñ·¯ÀÇ Yaw È¸Àü¿¡ µû¶ó Ä³¸¯ÅÍ È¸Àü ¾ÈÇÔ
-	bUseControllerRotationPitch = false; //ÄÁÆ®·Ñ·¯ÀÇ Pitch È¸Àü¿¡ µû¶ó Ä³¸¯ÅÍ È¸Àü ¾ÈÇÔ
-	bUseControllerRotationRoll = false; //ÄÁÆ®·Ñ·¯ÀÇ Roll È¸Àü¿¡ µû¶ó Ä³¸¯ÅÍ È¸Àü ¾ÈÇÔ
+	bUseControllerRotationYaw = false; //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Yaw íšŒì „ì— ë”°ë¼ ìºë¦­í„° íšŒì „ ì•ˆí•¨
+	bUseControllerRotationPitch = false; //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Pitch íšŒì „ì— ë”°ë¼ ìºë¦­í„° íšŒì „ ì•ˆí•¨
+	bUseControllerRotationRoll = false; //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Roll íšŒì „ì— ë”°ë¼ ìºë¦­í„° íšŒì „ ì•ˆí•¨
 
-	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //Ä³¸¯ÅÍ ¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
-	if(ensure(MoveComponent)) //¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ®°¡ À¯È¿ÇÑÁö È®ÀÎ
+	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //ìºë¦­í„° ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
+	if(ensure(MoveComponent)) //ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ê°€ ìœ íš¨í•œì§€ í™•ì¸
 	{
-		MoveComponent->bOrientRotationToMovement = true; //ÀÌµ¿ ¹æÇâÀ¸·Î Ä³¸¯ÅÍ È¸Àü ¼³Á¤
-		MoveComponent->RotationRate = FRotator(0.f, 540.f, 0.f); //È¸Àü ¼Óµµ ¼³Á¤
-		MoveComponent->GetNavAgentPropertiesRef().bCanCrouch = true; //¾É±â °¡´É ¼³Á¤
-		MoveComponent->MaxWalkSpeed = WalkSpeed; //±âº» °È±â ¼Óµµ ¼³Á¤
-		MoveComponent->MaxWalkSpeedCrouched = CrouchSpeed; //¾É±â ¼Óµµ ¼³Á¤
+		MoveComponent->bOrientRotationToMovement = true; //ì´ë™ ë°©í–¥ìœ¼ë¡œ ìºë¦­í„° íšŒì „ ì„¤ì •
+		MoveComponent->RotationRate = FRotator(0.f, 540.f, 0.f); //íšŒì „ ì†ë„ ì„¤ì •
+		MoveComponent->GetNavAgentPropertiesRef().bCanCrouch = true; //ì•‰ê¸° ê°€ëŠ¥ ì„¤ì •
+		MoveComponent->MaxWalkSpeed = WalkSpeed; //ê¸°ë³¸ ê±·ê¸° ì†ë„ ì„¤ì •
+		MoveComponent->MaxWalkSpeedCrouched = CrouchSpeed; //ì•‰ê¸° ì†ë„ ì„¤ì •
 	}
-	//Ä«¸Ş¶ó ºÕ ¼³Á¤
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom")); //½ºÇÁ¸µ¾Ï ÄÄÆ÷³ÍÆ® »ı¼º
-	CameraBoom->SetupAttachment(RootComponent); //·çÆ® ÄÄÆ÷³ÍÆ®¿¡ ºÎÂø
-	CameraBoom->TargetArmLength = CameraArmLength; //Ä«¸Ş¶ó¿Í Ä³¸¯ÅÍ »çÀÌ °Å¸® ¼³Á¤
-	CameraBoom->bUsePawnControlRotation = true; //ÄÁÆ®·Ñ·¯ È¸Àü¿¡ µû¶ó Ä«¸Ş¶ó È¸Àü ¼³Á¤
-	CameraBoom->bEnableCameraLag = true; //Ä«¸Ş¶ó Áö¿¬ È°¼ºÈ­
-	CameraBoom->CameraLagSpeed = 10.f; //Ä«¸Ş¶ó Áö¿¬ ¼Óµµ ¼³Á¤
+	//ì¹´ë©”ë¼ ë¶ ì„¤ì •
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom")); //ìŠ¤í”„ë§ì•” ì»´í¬ë„ŒíŠ¸ ìƒì„±
+	CameraBoom->SetupAttachment(RootComponent); //ë£¨íŠ¸ ì»´í¬ë„ŒíŠ¸ì— ë¶€ì°©
+	CameraBoom->TargetArmLength = CameraArmLength; //ì¹´ë©”ë¼ì™€ ìºë¦­í„° ì‚¬ì´ ê±°ë¦¬ ì„¤ì •
+	CameraBoom->bUsePawnControlRotation = true; //ì»¨íŠ¸ë¡¤ëŸ¬ íšŒì „ì— ë”°ë¼ ì¹´ë©”ë¼ íšŒì „ ì„¤ì •
+	CameraBoom->bEnableCameraLag = true; //ì¹´ë©”ë¼ ì§€ì—° í™œì„±í™”
+	CameraBoom->CameraLagSpeed = 10.f; //ì¹´ë©”ë¼ ì§€ì—° ì†ë„ ì„¤ì •
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera")); //Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ® »ı¼º
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); //Ä«¸Ş¶ó ºÕ¿¡ ºÎÂø
-	FollowCamera->bUsePawnControlRotation = false; //Ä«¸Ş¶ó°¡ ÆùÀÇ È¸Àü¿¡ µû¶ó È¸ÀüÇÏÁö ¾Êµµ·Ï ¼³Á¤
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera")); //ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸ ìƒì„±
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); //ì¹´ë©”ë¼ ë¶ì— ë¶€ì°©
+	FollowCamera->bUsePawnControlRotation = false; //ì¹´ë©”ë¼ê°€ í°ì˜ íšŒì „ì— ë”°ë¼ íšŒì „í•˜ì§€ ì•Šë„ë¡ ì„¤ì •
 	
-	//ÄÄ¹î ÄÄÆ÷³ÍÆ®
-	CombatComponent = CreateDefaultSubobject<UQPCombatComponent>(TEXT("CombatComponent")); //ÀüÅõ ÄÄÆ÷³ÍÆ® »ı¼º
+	//ì»´ë±ƒ ì»´í¬ë„ŒíŠ¸
+	CombatComponent = CreateDefaultSubobject<UQPCombatComponent>(TEXT("CombatComponent")); //ì „íˆ¬ ì»´í¬ë„ŒíŠ¸ ìƒì„±
 }
 
 void AQPCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	if (CombatComponent)
+	{
+		CombatComponent->OnWeaponTypeChanged.AddDynamic(this, &AQPCharacter::HandleWeaponTypeChanged); //ë¬´ê¸° íƒ€ì… ë³€ê²½ ì´ë²¤íŠ¸ ë°”ì¸ë”©
+		HandleWeaponTypeChanged(CombatComponent->GetEquippedWeaponType()); //í˜„ì¬ ë¬´ê¸° íƒ€ì… ì²˜ë¦¬
+	}
 	if(CameraBoom)
 	{
-		CameraBoom->TargetArmLength = CameraArmLength; //Ä«¸Ş¶ó¿Í Ä³¸¯ÅÍ »çÀÌ °Å¸® ¼³Á¤
-		CameraBoom->TargetOffset = StandingCameraOffset; //¼­ÀÖÀ» ¶§ Ä«¸Ş¶ó ¿ÀÇÁ¼Â ¼³Á¤
+		CameraBoom->TargetArmLength = CameraArmLength; //ì¹´ë©”ë¼ì™€ ìºë¦­í„° ì‚¬ì´ ê±°ë¦¬ ì„¤ì •
+		CameraBoom->TargetOffset = StandingCameraOffset; //ì„œìˆì„ ë•Œ ì¹´ë©”ë¼ ì˜¤í”„ì…‹ ì„¤ì •
 	}
-	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //Ä³¸¯ÅÍ ¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
+	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //ìºë¦­í„° ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
 	if (MoveComponent)
 	{
-		MoveComponent->MaxWalkSpeedCrouched = CrouchSpeed; //¾É±â ¼Óµµ ¼³Á¤
-		MoveComponent->GetNavAgentPropertiesRef().bCanCrouch = true; //¾É±â °¡´É ¼³Á¤
+		MoveComponent->MaxWalkSpeedCrouched = CrouchSpeed; //ì•‰ê¸° ì†ë„ ì„¤ì •
+		MoveComponent->GetNavAgentPropertiesRef().bCanCrouch = true; //ì•‰ê¸° ê°€ëŠ¥ ì„¤ì •
 	}
 
-	UpdateMovementSpeed(); //¿òÁ÷ÀÓ ¼Óµµ ¾÷µ¥ÀÌÆ®
+	UpdateMovementSpeed(); //ì›€ì§ì„ ì†ë„ ì—…ë°ì´íŠ¸
 }
 
 void AQPCharacter::Tick(float DeltaTime)
@@ -59,103 +67,125 @@ void AQPCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if(CameraBoom && CrouchCameraInterpSpeed > 0.f)
 	{
-		FVector DesiredOffset = GetDesiredCameraOffset(); //¿øÇÏ´Â Ä«¸Ş¶ó ¿ÀÇÁ¼Â °è»ê
-		const FVector NewOffset = FMath::VInterpTo(CameraBoom->TargetOffset, DesiredOffset, DeltaTime, CrouchCameraInterpSpeed); //Ä«¸Ş¶ó ¿ÀÇÁ¼Â º¸°£
-		CameraBoom->TargetOffset = NewOffset; //Ä«¸Ş¶ó ºÕÀÇ Å¸°Ù ¿ÀÇÁ¼Â ¾÷µ¥ÀÌÆ®
+		const FVector DesiredOffset = GetDesiredCameraOffset(); //ì›í•˜ëŠ” ì¹´ë©”ë¼ ì˜¤í”„ì…‹ ê³„ì‚°
+		const FVector NewOffset = FMath::VInterpTo(CameraBoom->TargetOffset, DesiredOffset, DeltaTime, CrouchCameraInterpSpeed); //ì¹´ë©”ë¼ ì˜¤í”„ì…‹ ë³´ê°„
+		CameraBoom->TargetOffset = NewOffset; //ì¹´ë©”ë¼ ë¶ì˜ íƒ€ê²Ÿ ì˜¤í”„ì…‹ ì—…ë°ì´íŠ¸
 	}
 }
 
 void AQPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	check(PlayerInputComponent); //ÀÔ·Â ÄÄÆ÷³ÍÆ® À¯È¿¼º °Ë»ç
-	PlayerInputComponent->BindAxis("MoveForward", this, &AQPCharacter::MoveForward); //¾ÕµÚ ÀÌµ¿ ¹ÙÀÎµù
-	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AQPCharacter::MoveRight); //ÁÂ¿ì ÀÌµ¿ ¹ÙÀÎµù
-	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AQPCharacter::Turn); //ÁÂ¿ì È¸Àü ¹ÙÀÎµù
-	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AQPCharacter::LookUp); //»óÇÏ È¸Àü ¹ÙÀÎµù
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AQPCharacter::StartJump); //Á¡ÇÁ ¹ÙÀÎµù
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AQPCharacter::StopJump); //Á¡ÇÁ ¸ØÃã ¹ÙÀÎµù
-	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AQPCharacter::ToggleCrouch); //¾É±â/ÀÏ¾î¼­±â Åä±Û ¹ÙÀÎµù
+	check(PlayerInputComponent); //ì…ë ¥ ì»´í¬ë„ŒíŠ¸ ìœ íš¨ì„± ê²€ì‚¬
+	PlayerInputComponent->BindAxis("MoveForward", this, &AQPCharacter::MoveForward); //ì•ë’¤ ì´ë™ ë°”ì¸ë”©
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AQPCharacter::MoveRight); //ì¢Œìš° ì´ë™ ë°”ì¸ë”©
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AQPCharacter::Turn); //ì¢Œìš° íšŒì „ ë°”ì¸ë”©
+	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AQPCharacter::LookUp); //ìƒí•˜ íšŒì „ ë°”ì¸ë”©
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AQPCharacter::StartJump); //ì í”„ ë°”ì¸ë”©
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AQPCharacter::StopJump); //ì í”„ ë©ˆì¶¤ ë°”ì¸ë”©
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AQPCharacter::ToggleCrouch); //ì•‰ê¸°/ì¼ì–´ì„œê¸° í† ê¸€ ë°”ì¸ë”©
 	// Sprint (Hold)
-	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Pressed, this, &AQPCharacter::StartSprint); //´Ş¸®±â ½ÃÀÛ ¹ÙÀÎµù
-	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Released, this, &AQPCharacter::StopSprint); //´Ş¸®±â ¸ØÃã ¹ÙÀÎµù
+	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Pressed, this, &AQPCharacter::StartSprint); //ë‹¬ë¦¬ê¸° ì‹œì‘ ë°”ì¸ë”©
+	PlayerInputComponent->BindAction(TEXT("Sprint"), IE_Released, this, &AQPCharacter::StopSprint); //ë‹¬ë¦¬ê¸° ë©ˆì¶¤ ë°”ì¸ë”©
+	// input ì¶”ê°€
+	PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AQPCharacter::AttackPressed); //ë°œì‚¬ ë°”ì¸ë”©
+	PlayerInputComponent->BindAction(TEXT("Attack"), IE_Released, this, &AQPCharacter::AttackReleased); //ë°œì‚¬ ë©ˆì¶¤ ë°”ì¸ë”©
+	PlayerInputComponent->BindAction(TEXT("Equip"), IE_Pressed, this, &AQPCharacter::TryEquipWeapon); //ì¥ì°© ë°”ì¸ë”©
 }
-
-//¿òÁ÷ÀÓ ÇÔ¼öµé
-void AQPCharacter::MoveForward(float Value) //¾ÕµÚ ÀÌµ¿
+void AQPCharacter::HandleWeaponTypeChanged(EQPWeaponType NewWeaponType)
 {
-	if (!Controller || FMath::IsNearlyZero(Value)) return; //ÄÁÆ®·Ñ·¯°¡ ¾ø°Å³ª ÀÔ·Â °ªÀÌ °ÅÀÇ 0ÀÌ¸é ÇÔ¼ö Á¾·á
+	Weapontype = NewWeaponType; //ì¥ì°©ëœ ë¬´ê¸° íƒ€ì… ì—…ë°ì´íŠ¸
+}
+//ì›€ì§ì„ í•¨ìˆ˜ë“¤
+void AQPCharacter::MoveForward(float Value) //ì•ë’¤ ì´ë™
+{
+	if (!Controller || FMath::IsNearlyZero(Value)) return; //ì»¨íŠ¸ë¡¤ëŸ¬ê°€ ì—†ê±°ë‚˜ ì…ë ¥ ê°’ì´ ê±°ì˜ 0ì´ë©´ í•¨ìˆ˜ ì¢…ë£Œ
 
-	const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f); //ÄÁÆ®·Ñ·¯ÀÇ Yaw È¸Àü °¡Á®¿À±â
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X); //¾Õ ¹æÇâ º¤ÅÍ °è»ê
-	AddMovementInput(Direction, Value); //ÀÌµ¿ ÀÔ·Â Ãß°¡
+	const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f); //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Yaw íšŒì „ ê°€ì ¸ì˜¤ê¸°
+	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X); //ì• ë°©í–¥ ë²¡í„° ê³„ì‚°
+	AddMovementInput(Direction, Value); //ì´ë™ ì…ë ¥ ì¶”ê°€
 }
 void AQPCharacter::MoveRight(float Value)
 {
-	if (!Controller || FMath::IsNearlyZero(Value)) return; //ÄÁÆ®·Ñ·¯°¡ ¾ø°Å³ª ÀÔ·Â °ªÀÌ °ÅÀÇ 0ÀÌ¸é ÇÔ¼ö Á¾·á
+	if (!Controller || FMath::IsNearlyZero(Value)) return; //ì»¨íŠ¸ë¡¤ëŸ¬ê°€ ì—†ê±°ë‚˜ ì…ë ¥ ê°’ì´ ê±°ì˜ 0ì´ë©´ í•¨ìˆ˜ ì¢…ë£Œ
 
-	const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f); //ÄÁÆ®·Ñ·¯ÀÇ Yaw È¸Àü °¡Á®¿À±â
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y); //¿À¸¥ÂÊ ¹æÇâ º¤ÅÍ °è»ê
-	AddMovementInput(Direction, Value); //ÀÌµ¿ ÀÔ·Â Ãß°¡
+	const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f); //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Yaw íšŒì „ ê°€ì ¸ì˜¤ê¸°
+	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y); //ì˜¤ë¥¸ìª½ ë°©í–¥ ë²¡í„° ê³„ì‚°
+	AddMovementInput(Direction, Value); //ì´ë™ ì…ë ¥ ì¶”ê°€
 }
-void AQPCharacter::Turn(float Value)
-{
-	AddControllerYawInput(Value); //ÄÁÆ®·Ñ·¯ÀÇ Yaw ÀÔ·Â Ãß°¡
-}
-void AQPCharacter::LookUp(float Value)
-{
-	AddControllerPitchInput(Value); //ÄÁÆ®·Ñ·¯ÀÇ Pitch ÀÔ·Â Ãß°¡
-}
-void AQPCharacter::StartJump()
-{
-	Jump(); //Á¡ÇÁ ½ÃÀÛ
-}
-void AQPCharacter::StopJump()
-{
-	StopJumping(); //Á¡ÇÁ ¸ØÃã
-}
+void AQPCharacter::Turn(float Value) { AddControllerYawInput(Value); }  //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Yaw ì…ë ¥ ì¶”ê°€
+void AQPCharacter::LookUp(float Value) { AddControllerPitchInput(Value); } //ì»¨íŠ¸ë¡¤ëŸ¬ì˜ Pitch ì…ë ¥ ì¶”ê°€
+void AQPCharacter::StartJump() { Jump(); } //ì í”„ ì‹œì‘
+void AQPCharacter::StopJump() { StopJumping(); } //ì í”„ ë©ˆì¶¤
 void AQPCharacter::ToggleCrouch()
 {
-	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //Ä³¸¯ÅÍ ¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
-	if (!MoveComponent || !MoveComponent->GetNavAgentPropertiesRef().bCanCrouch) return; //¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ®°¡ ¾ø°Å³ª ¾É±â ºÒ°¡´ÉÇÏ¸é ÇÔ¼ö Á¾·á
+	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //ìºë¦­í„° ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
+	if (!MoveComponent || !MoveComponent->GetNavAgentPropertiesRef().bCanCrouch) return; //ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ê°€ ì—†ê±°ë‚˜ ì•‰ê¸° ë¶ˆê°€ëŠ¥í•˜ë©´ í•¨ìˆ˜ ì¢…ë£Œ
 	if (bIsCrouched)
 	{
-		UnCrouch(); //ÀÏ¾î¼­±â
+		UnCrouch(); //ì¼ì–´ì„œê¸°
 	}
 	else
 	{
-		Crouch(); //¾É±â
+		Crouch(); //ì•‰ê¸°
 	}
 }
 void AQPCharacter::StartSprint()
 {
-	bWantsToSprint = true; //´Ş¸®±â ÀÇ»ç ¼³Á¤
-	UpdateMovementSpeed(); //¿òÁ÷ÀÓ ¼Óµµ ¾÷µ¥ÀÌÆ®
+	bWantsToSprint = true; //ë‹¬ë¦¬ê¸° ì˜ì‚¬ ì„¤ì •
+	UpdateMovementSpeed(); //ì›€ì§ì„ ì†ë„ ì—…ë°ì´íŠ¸
 }
 void AQPCharacter::StopSprint()
 {
-	bWantsToSprint = false; //´Ş¸®±â ÀÇ»ç ÇØÁ¦
-	UpdateMovementSpeed(); //¿òÁ÷ÀÓ ¼Óµµ ¾÷µ¥ÀÌÆ®
+	bWantsToSprint = false; //ë‹¬ë¦¬ê¸° ì˜ì‚¬ í•´ì œ
+	UpdateMovementSpeed(); //ì›€ì§ì„ ì†ë„ ì—…ë°ì´íŠ¸
 }
 void AQPCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
-	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust); //ºÎ¸ğ Å¬·¡½ºÀÇ OnStartCrouch È£Ãâ
-	UpdateMovementSpeed(); //¿òÁ÷ÀÓ ¼Óµµ ¾÷µ¥ÀÌÆ®
+	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust); //ë¶€ëª¨ í´ë˜ìŠ¤ì˜ OnStartCrouch í˜¸ì¶œ
+	UpdateMovementSpeed(); //ì›€ì§ì„ ì†ë„ ì—…ë°ì´íŠ¸
 }
 void AQPCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
-	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust); //ºÎ¸ğ Å¬·¡½ºÀÇ OnEndCrouch È£Ãâ
-	UpdateMovementSpeed(); //¿òÁ÷ÀÓ ¼Óµµ ¾÷µ¥ÀÌÆ®
+	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust); //ë¶€ëª¨ í´ë˜ìŠ¤ì˜ OnEndCrouch í˜¸ì¶œ
+	UpdateMovementSpeed(); //ì›€ì§ì„ ì†ë„ ì—…ë°ì´íŠ¸
 }
 void AQPCharacter::UpdateMovementSpeed()
 {
-	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //Ä³¸¯ÅÍ ¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
-	if (!MoveComponent) return; //¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ®°¡ ¾øÀ¸¸é ÇÔ¼ö Á¾·á
+	UCharacterMovementComponent* MoveComponent = GetCharacterMovement(); //ìºë¦­í„° ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
+	if (!MoveComponent) return; //ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìœ¼ë©´ í•¨ìˆ˜ ì¢…ë£Œ
 	if (bIsCrouched)
 	{
-		MoveComponent->MaxWalkSpeed = CrouchSpeed; //¾É±â ¼Óµµ ¼³Á¤
-		return; //¾É¾ÆÀÖÀ» ¶§´Â ´Ş¸®±â ¿©ºÎ¿Í »ó°ü¾øÀÌ ¾É±â ¼Óµµ »ç¿ë
+		MoveComponent->MaxWalkSpeed = CrouchSpeed; //ì•‰ê¸° ì†ë„ ì„¤ì •
+		return; //ì•‰ì•„ìˆì„ ë•ŒëŠ” ë‹¬ë¦¬ê¸° ì—¬ë¶€ì™€ ìƒê´€ì—†ì´ ì•‰ê¸° ì†ë„ ì‚¬ìš©
 	}
-	MoveComponent->MaxWalkSpeed = bWantsToSprint ? SprintSpeed : WalkSpeed; //´Ş¸®±â ÀÇ»ç¿¡ µû¶ó ¼Óµµ ¼³Á¤
+	MoveComponent->MaxWalkSpeed = bWantsToSprint ? SprintSpeed : WalkSpeed; //ë‹¬ë¦¬ê¸° ì˜ì‚¬ì— ë”°ë¼ ì†ë„ ì„¤ì •
 }
-
+//ì „íˆ¬ (Combat) ê´€ë ¨ í•¨ìˆ˜ë“¤
+void AQPCharacter::TryEquipWeapon() {
+	if (!CombatComponent) return;
+	const FVector TraceStart = FollowCamera ? FollowCamera->GetComponentLocation() : GetActorLocation(); //ì¹´ë©”ë¼ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
+	const FVector TraceDir = FollowCamera ? FollowCamera->GetForwardVector() : GetActorForwardVector(); //ì¹´ë©”ë¼ ì• ë°©í–¥ ë²¡í„° ê°€ì ¸ì˜¤ê¸°
+	const FVector TraceEnd = TraceStart + (TraceDir * EquipTraceDistance); //íŠ¸ë ˆì´
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Equiptrace), false); //ì¶©ëŒ ì¿¼ë¦¬ íŒŒë¼ë¯¸í„° ì„¤ì •
+	Params.AddIgnoredActor(this); //ìê¸° ìì‹  ë¬´ì‹œ
+	FHitResult Hit; //íˆíŠ¸ ê²°ê³¼ ë³€ìˆ˜
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, Params); //ë¼ì¸ íŠ¸ë ˆì´ìŠ¤ ìˆ˜í–‰
+	if (bDrawEquipTraceDebug) { //ë””ë²„ê·¸ ì„  ê·¸ë¦¬ê¸° ì„¤ì •ì´ ì¼œì ¸ ìˆìœ¼ë©´
+		const FVector DebugEnd = bHit ? Hit.ImpactPoint : TraceEnd; //ë””ë²„ê·¸ ì„ ì˜ ë ìœ„ì¹˜ ê³„ì‚°
+		DrawDebugLine(GetWorld(), TraceStart, DebugEnd, FColor::Yellow, false, 2.f, 0, 1.f); //ë””ë²„ê·¸ ì„  ê·¸ë¦¬ê¸°
+	}
+	if (!bHit) return; //ì•„ë¬´ê²ƒë„ ë§ì§€ ì•Šìœ¼ë©´ í•¨ìˆ˜ ì¢…ë£Œ
+	if(AWeaponBase* HitWeapon = Cast<AWeaponBase>(Hit.GetActor())) //ë§ì€ ì•¡í„°ê°€ ë¬´ê¸°ì¸ì§€ í™•ì¸
+	{
+		CombatComponent->EquipWeapon(HitWeapon, true); //ë¬´ê¸° ì¥ì°© ì‹œë„
+	}
+}
+void AQPCharacter::AttackPressed()
+{
+	if (CombatComponent) CombatComponent->StartAttack(); //ê³µê²© ì‹œì‘
+}
+void AQPCharacter::AttackReleased()
+{
+	if (CombatComponent) CombatComponent->StopAttack(); //ê³µê²© ë©ˆì¶¤
+}

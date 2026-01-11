@@ -16,19 +16,19 @@ class PJ_QUIET_PROTOCOL_API AGunWeapon : public AWeaponBase
 	GENERATED_BODY()
 	
 public:
-	AGunWeapon(); //»ı¼ºÀÚ
+	AGunWeapon(); //ìƒì„±ì
 
-	virtual void StartFire_Implementation() override; //¹ß»ç ½ÃÀÛ ÇÔ¼ö ÀçÁ¤ÀÇ
-	virtual void StopAttack_Implementation() override; //°ø°İ ÁßÁö ÇÔ¼ö ÀçÁ¤ÀÇ
+	virtual void StartFire_Implementation() override; //ë°œì‚¬ ì‹œì‘ í•¨ìˆ˜ ì¬ì •ì˜
+	virtual void StopAttack_Implementation() override; //ê³µê²© ì¤‘ì§€ í•¨ìˆ˜ ì¬ì •ì˜
 
 protected:
-	void FireOnce(); //ÇÑ ¹ø ¹ß»ç ÇÔ¼ö
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon|Gun", meta = (ClampMin = "0.0"))
-	float Range = 15000.f; //»ç°Å¸®
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Gun", meta = (ClampMin="0.0"));
-	float FireRate = 0.1f; //¹ß»ç ¼Óµµ(ÃÊ´ç ¹ß»ç È½¼ö)
+	void FireOnce(); //í•œ ë²ˆ ë°œì‚¬ í•¨ìˆ˜
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon|Gun", meta = (ClampMin = "0.0"))
+	float Range = 15000.f; //ì‚¬ê±°ë¦¬
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Gun", meta = (ClampMin="0.0"))
+	float FireRate = 0.1f; //ë°œì‚¬ ì†ë„(ì´ˆë‹¹ ë°œì‚¬ íšŸìˆ˜)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Gun")
-	bool bAutomatic = true; //ÀÚµ¿ ¹ß»ç ¿©ºÎ
+	bool bAutomatic = true; //ìë™ ë°œì‚¬ ì—¬ë¶€
 private:
-	FTimerHandle TimerHandle_AutoFire; //ÀÚµ¿ ¹ß»ç Å¸ÀÌ¸Ó ÇÚµé
+	FTimerHandle TimerHandle_AutoFire; //ìë™ ë°œì‚¬ íƒ€ì´ë¨¸ í•¸ë“¤
 };

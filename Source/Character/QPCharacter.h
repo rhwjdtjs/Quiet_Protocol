@@ -5,8 +5,8 @@
 #include "PJ_Quiet_Protocol/Commons/QPCombatTypes.h"
 #include "QPCharacter.generated.h"
 
-class UQPCombatComponent; //Àü¹æ ¼±¾ğ
-
+class UQPCombatComponent; //ì „ë°© ì„ ì–¸
+class AWeaponBase; //ì „ë°© ì„ ì–¸
 UCLASS()
 class PJ_QUIET_PROTOCOL_API AQPCharacter : public ACharacter
 {
@@ -14,57 +14,69 @@ class PJ_QUIET_PROTOCOL_API AQPCharacter : public ACharacter
 
 public:
 	AQPCharacter();
-
-protected:
-	virtual void BeginPlay() override; 
-	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override; //¾É±â ½ÃÀÛ½Ã È£Ãâ
-	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override; //ÀÏ¾î¼­±â ½ÃÀÛ½Ã È£Ãâ
-public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	FORCEINLINE FVector GetDesiredCameraOffset() const { return bIsCrouched ? CrouchedCameraOffset : StandingCameraOffset; } //¿øÇÏ´Â Ä«¸Ş¶ó ¿ÀÇÁ¼Â ¹İÈ¯
-
+	UFUNCTION(BlueprintPure, Category = "Combat")
+	FORCEINLINE FVector GetDesiredCameraOffset() const { return bIsCrouched ? CrouchedCameraOffset : StandingCameraOffset; } //ì›í•˜ëŠ” ì¹´ë©”ë¼ ì˜¤í”„ì…‹ ë°˜í™˜
+	UFUNCTION(BlueprintPure, Category = "Combat")
+	FORCEINLINE UQPCombatComponent* GetCombatComponent() const { return CombatComponent; } //ì „íˆ¬ ì»´í¬ë„ŒíŠ¸ ë°˜í™˜ í•¨ìˆ˜
+	UFUNCTION(BlueprintPure, Category = "Combat")
+	FORCEINLINE EQPWeaponType GetWeaponType() const { return Weapontype; } //ì¥ì°©ëœ ë¬´ê¸° íƒ€ì… ë°˜í™˜ í•¨ìˆ˜
+	UFUNCTION(BlueprintPure, Category = "Combat")
+	FORCEINLINE bool IsSprinting() const { return bWantsToSprint && !bIsCrouched; }
 protected:
+	virtual void BeginPlay() override; 
+	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override; //ì•‰ê¸° ì‹œì‘ì‹œ í˜¸ì¶œ
+	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override; //ì¼ì–´ì„œê¸° ì‹œì‘ì‹œ í˜¸ì¶œ
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	UQPCombatComponent* CombatComponent; //ÀüÅõ ÄÄÆ÷³ÍÆ®
+	UQPCombatComponent* CombatComponent; //ì „íˆ¬ ì»´í¬ë„ŒíŠ¸
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Camera")
-	class USpringArmComponent* CameraBoom; //3ÀÎÄª ÇÃ·¹ÀÌ¸¦ À§ÇÑ ½ºÇÁ¸µ¾Ï 
+	class USpringArmComponent* CameraBoom; //3ì¸ì¹­ í”Œë ˆì´ë¥¼ ìœ„í•œ ìŠ¤í”„ë§ì•” 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	class UCameraComponent* FollowCamera; //ÇÃ·¹ÀÌ¾î¸¦ µû¶ó´Ù´Ï´Â Ä«¸Ş¶ó
+	class UCameraComponent* FollowCamera; //í”Œë ˆì´ì–´ë¥¼ ë”°ë¼ë‹¤ë‹ˆëŠ” ì¹´ë©”ë¼
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	EQPWeaponType Weapontype = EQPWeaponType::EWT_None; //ì¥ì°©ëœ ë¬´ê¸° íƒ€ì…
+	UFUNCTION()
+	void HandleWeaponTypeChanged(EQPWeaponType NewWeaponType); //ë¬´ê¸° íƒ€ì… ë³€ê²½ í•¸ë“¤ëŸ¬
+	//ì›€ì§ì„ ì†ë„ ë³€ìˆ˜ë“¤
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WalkSpeed = 600.f; //ê±·ê¸° ì†ë„
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float SprintSpeed = 900.f; //ë‹¬ë¦¬ê¸° ì†ë„
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float CrouchSpeed = 300.f; //ì•‰ê¸° ì†ë„
 
-	//¿òÁ÷ÀÓ ¼Óµµ º¯¼öµé
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WalkSpeed = 600.f; //°È±â ¼Óµµ
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float SprintSpeed = 900.f; //´Ş¸®±â ¼Óµµ
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float CrouchSpeed = 300.f; //¾É±â ¼Óµµ
-
-	//¾É±â Ä«¸Ş¶ó º¯¼öµé
+	//ì•‰ê¸° ì¹´ë©”ë¼ ë³€ìˆ˜ë“¤
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Crouch")
-	FVector StandingCameraOffset = FVector::ZeroVector; //¼­ÀÖÀ» ¶§ Ä«¸Ş¶ó ¿ÀÇÁ¼Â
+	FVector StandingCameraOffset = FVector::ZeroVector; //ì„œìˆì„ ë•Œ ì¹´ë©”ë¼ ì˜¤í”„ì…‹
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Crouch")
-	FVector CrouchedCameraOffset = FVector(0.f, 0.f, -40.f); //¾É¾ÆÀÖÀ» ¶§ Ä«¸Ş¶ó ¿ÀÇÁ¼Â
+	FVector CrouchedCameraOffset = FVector(0.f, 0.f, -40.f); //ì•‰ì•„ìˆì„ ë•Œ ì¹´ë©”ë¼ ì˜¤í”„ì…‹
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera|Crouch", meta = (ClampMin = "0.0")) 
-	float CrouchCameraInterpSpeed = 12.f; //Ä«¸Ş¶ó À§Ä¡ º¸°£ ¼Óµµ
+	float CrouchCameraInterpSpeed = 12.f; //ì¹´ë©”ë¼ ìœ„ì¹˜ ë³´ê°„ ì†ë„
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (ClampMin = "0.0")) 
-	float CameraArmLength = 300.f; //Ä«¸Ş¶ó¿Í Ä³¸¯ÅÍ »çÀÌ °Å¸®
-
-	//ÀÔ·Â ÇÔ¼öµé
-	void MoveForward(float Value); //¾ÕµÚ ÀÌµ¿
-	void MoveRight(float Value); //ÁÂ¿ì ÀÌµ¿
-	void Turn(float Value); //ÁÂ¿ì È¸Àü
-	void LookUp(float Value); //»óÇÏ È¸Àü
-	void StartJump(); //Á¡ÇÁ ½ÃÀÛ
-	void StopJump(); //Á¡ÇÁ ¸ØÃã
-	void ToggleCrouch(); //¾É±â/ÀÏ¾î¼­±â Åä±Û
-	void StartSprint(); //´Ş¸®±â ½ÃÀÛ
-	void StopSprint(); //´Ş¸®±â ¸ØÃã
+	float CameraArmLength = 300.f; //ì¹´ë©”ë¼ì™€ ìºë¦­í„° ì‚¬ì´ ê±°ë¦¬
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Weapon", meta = (ClampMin= "0.0"))
+	float EquipTraceDistance = 250.f; //ë¬´ê¸° ì¥ì°© ê±°ë¦¬
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Weapon")
+	bool bDrawEquipTraceDebug = false; //ë¬´ê¸° ì¥ì°© ê±°ë¦¬ ë””ë²„ê·¸ ì„  ê·¸ë¦¬ê¸° ì—¬ë¶€
+	//ì…ë ¥ í•¨ìˆ˜ë“¤
+	void MoveForward(float Value); //ì•ë’¤ ì´ë™
+	void MoveRight(float Value); //ì¢Œìš° ì´ë™
+	void Turn(float Value); //ì¢Œìš° íšŒì „
+	void LookUp(float Value); //ìƒí•˜ íšŒì „
+	void StartJump(); //ì í”„ ì‹œì‘
+	void StopJump(); //ì í”„ ë©ˆì¶¤
+	void ToggleCrouch(); //ì•‰ê¸°/ì¼ì–´ì„œê¸° í† ê¸€
+	void StartSprint(); //ë‹¬ë¦¬ê¸° ì‹œì‘
+	void StopSprint(); //ë‹¬ë¦¬ê¸° ë©ˆì¶¤
+	void TryEquipWeapon(); //ë¬´ê¸° ì¥ì°© ì‹œë„ í•¨ìˆ˜
+	void AttackPressed(); //ê³µê²© ë²„íŠ¼ ëˆŒë¦¼
+	void AttackReleased(); //ê³µê²© ë²„íŠ¼ ë–¼ì§
 
 private:
-	void UpdateMovementSpeed(); //¿òÁ÷ÀÓ ¼Óµµ ¾÷µ¥ÀÌÆ®
-	bool bWantsToSprint = false; //´Ş¸®±â ÀÇ»ç ¿©ºÎ
+	void UpdateMovementSpeed(); //ì›€ì§ì„ ì†ë„ ì—…ë°ì´íŠ¸
+	bool bWantsToSprint = false; //ë‹¬ë¦¬ê¸° ì˜ì‚¬ ì—¬ë¶€
 
 };
